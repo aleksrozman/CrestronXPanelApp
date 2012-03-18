@@ -51,12 +51,12 @@ public class DigitalButton extends Button implements InputHandlerIf {
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN: {
-      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT,"1");
+      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT, "1");
       expectingFeedback = true;
       break;
     }
     case MotionEvent.ACTION_UP: {
-      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT,"0");
+      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT, "0");
       break;
     }
     }
@@ -73,17 +73,12 @@ public class DigitalButton extends Button implements InputHandlerIf {
       setPressed(state);
     }
   };
-  
-  public void setValue(String v)
-  {
-    if(v.equals("0"))
-    {
-     off(); 
-    }
+
+  public void setValue(String v) {
+    if (v.equals("0"))
+      off();
     else
-    {
       on();
-    }
   }
 
   public void on() {
@@ -106,29 +101,6 @@ public class DigitalButton extends Button implements InputHandlerIf {
     }
   }
 
-  public int getValue() {
-    if(state)
-    {
-      return 1;
-    }
-    else
-    {
-      return 0;
-    }
-
-  }
-
-  public void setValue(int v) {
-    if(v == 0)
-    {
-      off();
-    }
-    else
-    {
-      on();
-    }
-  }
-  
   public void setCaption(String c) {
     // Does nothing
   }

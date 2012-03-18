@@ -44,26 +44,13 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
       ((HomeAutomationApp) getContext()).registerInput(this, join, Utilities.ANALOG_INPUT);
     }
   }
-  
-  public void setValue(String v)
-  {
+
+  public void setValue(String v) {
     setValue(Integer.parseInt(v));
-  }
-
-  public void on() {
-    setValue(MAXIMUM_VALUE);
-  }
-
-  public void off() {
-    setValue(0);
   }
 
   public boolean getState() {
     return (value == 0);
-  }
-
-  public int getValue() {
-    return value;
   }
 
   public void setValue(int v) {
@@ -74,7 +61,6 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
   }
 
   public void restoreState() {
-    // TODO
     setValue(value);
   }
 

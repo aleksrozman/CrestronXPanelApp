@@ -11,12 +11,11 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 public class SerialText extends TextView implements InputHandlerIf {
-  
+
   public int join;
   private String caption;
   private Handler h = new Handler();
 
-  
   public SerialText(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     init(attrs);
@@ -43,49 +42,25 @@ public class SerialText extends TextView implements InputHandlerIf {
     }
   }
 
-  
-  public void on() {
-    // Nothing
-  }
-
-  public void off() {
-    // Nothing
-  }
-
   public boolean getState() {
     // Nothing
     return false;
   }
 
-  public int getValue() {
-    // Nothing
-    return 0;
-  }
-
-  public void setValue(int v) {
-    // Nothing    
-  }
-  
-  public void setValue(String v)
-  {
-    setCaption(v);
-  }
-
-  public void setCaption(String c) {
-    caption = c;
+  public void setValue(String v) {
+    caption = v;
     h.post(updateCaption);
   }
 
   public void restoreState() {
-    setCaption(caption);
+    setValue(caption);
   }
-  
+
   Runnable updateCaption = new Runnable() {
-    public void run()
-    {
+    public void run() {
       setText(caption);
     }
-    
+
   };
 
 }

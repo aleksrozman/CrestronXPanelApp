@@ -56,6 +56,9 @@ public class Server implements Runnable {
         mPrinter.print(s);
         mPrinter.flush();
       }
+      else {
+        Utilities.logDebug("Cannot send string " + s + " because mSocket is " + ((mSocket == null) ? "null" : "not connected"));
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background4"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/arrow_group"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dip"
+        android:scaleType="fitCenter" >
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_up"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/up"
+            android:hapticFeedbackEnabled="true"
+            app:join="71"
+            android:scaleType="fitCenter"
+            app:special="1" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_center"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_below="@id/pad_up"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="5dip"
+            android:background="@drawable/center"
+            android:hapticFeedbackEnabled="true"
+            app:join="73"
+            android:scaleType="fitCenter" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_left"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_below="@id/pad_up"
+            android:layout_toLeftOf="@id/pad_center"
+            android:background="@drawable/left"
+            android:hapticFeedbackEnabled="true"
+            app:join="69"
+            android:scaleType="fitCenter" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_right"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_below="@id/pad_up"
+            android:layout_toRightOf="@id/pad_center"
+            android:background="@drawable/right"
+            android:hapticFeedbackEnabled="true"
+            app:join="70"
+            android:scaleType="fitCenter" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_down"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_below="@id/pad_center"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/down"
+            android:hapticFeedbackEnabled="true"
+            app:join="72"
+            android:scaleType="fitCenter"
+            app:special="2" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/pad_menu"
+            android:layout_width="120dip"
+            android:layout_height="80dip"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/pad_down"
+            android:background="@drawable/numpad_button"
+            app:join="99"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="Info/Menu"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.DigitalButton>
+
+        <TextView
+            android:id="@+id/fourthlabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Directional" >
+        </TextView>
+    </RelativeLayout>
+
+</AbsoluteLayout>

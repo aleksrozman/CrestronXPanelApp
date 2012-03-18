@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background5"
+    android:orientation="vertical"
+    android:paddingLeft="5dip"
+    android:paddingRight="5dip" >
+
+    <RelativeLayout
+        android:id="@+id/status_group"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dip"
+        android:scaleType="fitCenter" >
+
+        <TextView
+            android:id="@+id/temptext"
+            android:layout_width="wrap_content"
+            android:layout_height="45dip"
+            android:layout_marginBottom="5dip"
+            android:layout_marginRight="5dip"
+            android:scaleType="fitCenter"
+            android:text="Temperature:"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <com.InputTypes.SerialText
+            android:id="@+id/temperature"
+            android:layout_width="100dip"
+            android:layout_height="42dip"
+            android:layout_marginBottom="8dip"
+            android:layout_toRightOf="@id/temptext"
+            android:background="@drawable/border"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitCenter"
+            app:sjoin="1"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.SerialText>
+
+        <TextView
+            android:id="@+id/alarm1text"
+            android:layout_width="wrap_content"
+            android:layout_height="45dip"
+            android:layout_below="@id/temptext"
+            android:layout_marginBottom="5dip"
+            android:layout_marginRight="5dip"
+            android:scaleType="fitCenter"
+            android:text="Alarm 1:"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <com.InputTypes.SerialText
+            android:id="@+id/alarm1"
+            android:layout_width="150dip"
+            android:layout_height="42dip"
+            android:layout_below="@id/temperature"
+            android:layout_marginBottom="8dip"
+            android:layout_toRightOf="@id/alarm1text"
+            android:background="@drawable/border"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitCenter"
+            app:sjoin="2"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.SerialText>
+
+        <TextView
+            android:id="@+id/alarm2text"
+            android:layout_width="wrap_content"
+            android:layout_height="45dip"
+            android:layout_below="@id/alarm1text"
+            android:layout_marginBottom="10dip"
+            android:layout_marginRight="5dip"
+            android:scaleType="fitCenter"
+            android:text="Alarm 2:"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <com.InputTypes.SerialText
+            android:id="@+id/alarm2"
+            android:layout_width="150dip"
+            android:layout_height="45dip"
+            android:layout_below="@id/alarm1"
+            android:layout_marginBottom="10dip"
+            android:layout_toRightOf="@id/alarm2text"
+            android:background="@drawable/border"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitCenter"
+            app:sjoin="3"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.SerialText>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/precision"
+            android:layout_width="140dip"
+            android:layout_height="80dip"
+            android:layout_below="@id/alarm2text"
+            android:layout_marginBottom="10dip"
+            android:background="@drawable/numpad_button"
+            app:join="6"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="Precision"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/dimension"
+            android:layout_width="140dip"
+            android:layout_height="80dip"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/alarm2"
+            android:layout_marginBottom="10dip"
+            android:background="@drawable/numpad_button"
+            app:join="5"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="Dimension"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/dimension_off"
+            android:layout_width="fill_parent"
+            android:layout_height="80dip"
+            android:layout_below="@id/precision"
+            android:background="@drawable/numpad_button"
+            app:join="22"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="Shutdown Dimension"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.DigitalButton>
+
+        <TextView
+            android:id="@+id/fifthlabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Informational" >
+        </TextView>
+    </RelativeLayout>
+
+</AbsoluteLayout>

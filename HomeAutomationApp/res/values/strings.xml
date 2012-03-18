@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">Home Control</string>
+<string name="port">4900</string>
+<string name="ip">192.168.1.25</string>
+</resources>

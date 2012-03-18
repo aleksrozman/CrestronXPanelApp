@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class Server implements Runnable {
+  
   private static volatile boolean serverThreadAlive = false;
   private static final int MY_NOTIFICATION = 1;
   private static final int MAX_RETRIES = 3;

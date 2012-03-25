@@ -154,7 +154,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:text="Informational"
-            android:textColor="#2D4363"
+            android:textColor="#828486"
             android:textSize="14sp"
             android:textStyle="bold"
             android:typeface="sans" >

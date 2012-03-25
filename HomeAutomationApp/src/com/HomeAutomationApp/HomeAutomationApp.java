@@ -35,7 +35,7 @@ public class HomeAutomationApp extends Activity {
   private static final int DISCONNECT_ID = Menu.FIRST + 4;
 
   private static final float MIN_SWIPE_DISTANCE = 75;
-  private static final float EDGE_THRESHOLD = 50;
+  private static final float EDGE_THRESHOLD = 75;
   private float oldTouchValue;
 
   private Server mServer;

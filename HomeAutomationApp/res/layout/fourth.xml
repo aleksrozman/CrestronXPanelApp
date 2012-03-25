@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background4"
+    android:background="@drawable/background"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -87,7 +87,7 @@
             android:scaleType="fitCenter"
             android:shadowColor="#000000"
             android:text="Info/Menu"
-            android:textColor="#FFFFFF"
+            android:textColor="#486098"
             android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="sans" >
@@ -99,7 +99,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="Directional" >
+            android:text="Directional"
+            android:textColor="#2D4363"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
         </TextView>
     </RelativeLayout>
 

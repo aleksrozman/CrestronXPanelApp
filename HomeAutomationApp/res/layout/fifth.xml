@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background5"
+    android:background="@drawable/background"
     android:orientation="vertical"
     android:paddingLeft="5dip"
     android:paddingRight="5dip" >
@@ -83,12 +83,12 @@
             android:layout_height="80dip"
             android:layout_below="@id/alarm1"
             android:layout_marginBottom="10dip"
-            android:background="@drawable/numpad_button"
+            android:background="@drawable/generic_button"
             app:join="6"
             android:scaleType="fitCenter"
             android:shadowColor="#000000"
             android:text="Precision"
-            android:textColor="#FFFFFF"
+            android:textColor="#2D4363"
             android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="sans" >
@@ -101,12 +101,12 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/alarm2"
             android:layout_marginBottom="10dip"
-            android:background="@drawable/numpad_button"
+            android:background="@drawable/generic_button"
             app:join="5"
             android:scaleType="fitCenter"
             android:shadowColor="#000000"
             android:text="Dimension"
-            android:textColor="#FFFFFF"
+            android:textColor="#2D4363"
             android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="sans" >
@@ -136,12 +136,12 @@
             android:layout_height="80dip"
             android:layout_alignParentRight="true"
             android:layout_below="@id/dimension"
-            android:background="@drawable/numpad_button"
+            android:background="@drawable/generic_button"
             app:join="22"
             android:scaleType="fitCenter"
             android:shadowColor="#000000"
             android:text="Shutdown Dimension"
-            android:textColor="#FFFFFF"
+            android:textColor="#2D4363"
             android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="sans" >
@@ -153,7 +153,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="Informational" >
+            android:text="Informational"
+            android:textColor="#2D4363"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
         </TextView>
     </RelativeLayout>
 

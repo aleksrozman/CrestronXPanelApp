@@ -35,6 +35,7 @@ public class HomeAutomationApp extends Activity {
   private static final int DISCONNECT_ID = Menu.FIRST + 4;
 
   private static final float MIN_SWIPE_DISTANCE = 75;
+  private static final float EDGE_THRESHOLD = 50;
   private float oldTouchValue;
 
   private Server mServer;
@@ -185,6 +186,8 @@ public class HomeAutomationApp extends Activity {
       int rindex = mFlipper.getDisplayedChild() + 1;
       View leftView = null;
       View rightView = null;
+      boolean switchRight = false;
+      boolean switchLeft = false;
       if (lindex >= 0) {
         leftView = mFlipper.getChildAt(lindex);
       }
@@ -202,37 +205,47 @@ public class HomeAutomationApp extends Activity {
       }
       case MotionEvent.ACTION_UP: {
         float currentX = event.getX();
-        if (oldTouchValue == currentX)
-          return false;
+        if (oldTouchValue == currentX) {
+          if (currentX < EDGE_THRESHOLD)
+            switchLeft = true;
+          if (currentView.getWidth() - currentX < EDGE_THRESHOLD)
+            switchRight = true;
+          if (!switchLeft && !switchRight)
+            return false;
+        }
         if (oldTouchValue < currentX) {
           if (leftView == null) {
-            currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
-            break;
+            leftView = mFlipper.getChildAt(mFlipper.getChildCount() - 1);
           }
-          if ((currentX - oldTouchValue) < MIN_SWIPE_DISTANCE) {
+          if ((currentX - oldTouchValue) < MIN_SWIPE_DISTANCE && (currentView.getWidth() - currentX) > EDGE_THRESHOLD) {
             currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
             leftView.setVisibility(View.INVISIBLE);
             break;
           }
-          float temp = (currentView.getWidth() - (currentX - oldTouchValue)) / currentView.getWidth();
-          mFlipper.setInAnimation(Utilities.inFromLeftAnimation(temp));
-          mFlipper.setOutAnimation(Utilities.outToRightAnimation(temp));
-          mFlipper.showPrevious();
+          switchLeft = true;
         }
         if (oldTouchValue > currentX) {
           if (rightView == null) {
-            currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
-            break;
+            rightView = mFlipper.getChildAt(0);
           }
-          if ((oldTouchValue - currentX) < MIN_SWIPE_DISTANCE) {
+          if ((oldTouchValue - currentX) < MIN_SWIPE_DISTANCE && currentX > EDGE_THRESHOLD) {
             currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
             rightView.setVisibility(View.INVISIBLE);
             break;
           }
+          switchRight = true;
+        }
+        if (switchRight) {
           float temp = (currentView.getWidth() - (oldTouchValue - currentX)) / currentView.getWidth();
           mFlipper.setInAnimation(Utilities.inFromRightAnimation(temp));
           mFlipper.setOutAnimation(Utilities.outToLeftAnimation(temp));
           mFlipper.showNext();
+        }
+        if (switchLeft) {
+          float temp = (currentView.getWidth() - (currentX - oldTouchValue)) / currentView.getWidth();
+          mFlipper.setInAnimation(Utilities.inFromLeftAnimation(temp));
+          mFlipper.setOutAnimation(Utilities.outToRightAnimation(temp));
+          mFlipper.showPrevious();
         }
         return true;
       }
@@ -242,13 +255,13 @@ public class HomeAutomationApp extends Activity {
         currentView.layout(temp, currentView.getTop(), temp + currentView.getWidth(), currentView.getBottom());
         if (temp < 0) {
           if (rightView == null)
-            break;
+            rightView = mFlipper.getChildAt(0);
           rightView.layout(currentView.getRight(), rightView.getTop(), currentView.getRight() + rightView.getWidth(),
               rightView.getBottom());
           rightView.setVisibility(View.VISIBLE);
         } else if (temp > 0) {
           if (leftView == null)
-            break;
+            leftView = mFlipper.getChildAt(mFlipper.getChildCount() - 1);
           leftView.layout(currentView.getLeft() - leftView.getWidth(), leftView.getTop(), currentView.getLeft(),
               leftView.getBottom());
           leftView.setVisibility(View.VISIBLE);

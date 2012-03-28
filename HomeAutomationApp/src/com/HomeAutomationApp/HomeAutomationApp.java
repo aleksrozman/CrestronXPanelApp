@@ -217,7 +217,7 @@ public class HomeAutomationApp extends Activity {
           if (leftView == null) {
             leftView = mFlipper.getChildAt(mFlipper.getChildCount() - 1);
           }
-          if ((currentX - oldTouchValue) < MIN_SWIPE_DISTANCE && (currentView.getWidth() - currentX) > EDGE_THRESHOLD) {
+          if ((currentX - oldTouchValue) < MIN_SWIPE_DISTANCE || currentX < EDGE_THRESHOLD) {
             currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
             leftView.setVisibility(View.INVISIBLE);
             break;
@@ -228,7 +228,7 @@ public class HomeAutomationApp extends Activity {
           if (rightView == null) {
             rightView = mFlipper.getChildAt(0);
           }
-          if ((oldTouchValue - currentX) < MIN_SWIPE_DISTANCE && currentX > EDGE_THRESHOLD) {
+          if ((oldTouchValue - currentX) < MIN_SWIPE_DISTANCE || (currentView.getWidth() - currentX) < EDGE_THRESHOLD) {
             currentView.layout(0, currentView.getTop(), (int) (currentView.getWidth()), currentView.getBottom());
             rightView.setVisibility(View.INVISIBLE);
             break;

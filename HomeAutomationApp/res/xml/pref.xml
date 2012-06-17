@@ -11,4 +11,9 @@
     android:title="IP Address"
     android:inputType="textUri"
     android:summary="IP Address of system" android:defaultValue="@string/ip"/>
+  <EditTextPreference
+    android:key="id"
+    android:title="Panel ID"
+    android:inputType="number"
+    android:summary="ID of eControl for PC in SIMPL" android:defaultValue="@string/id"/>
 </PreferenceScreen>

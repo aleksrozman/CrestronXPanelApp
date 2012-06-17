@@ -2,6 +2,7 @@
 <resources>
     
     <string name="app_name">Home Control</string>
-<string name="port">4900</string>
+<string name="port">41794</string>
 <string name="ip">192.168.1.25</string>
+<string name="id">4</string>
 </resources>

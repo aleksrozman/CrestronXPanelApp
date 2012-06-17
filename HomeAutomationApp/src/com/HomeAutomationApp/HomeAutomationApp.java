@@ -9,6 +9,7 @@ import com.HomeAutomationApp.R;
 import com.InputTypes.DigitalButton;
 import com.InputTypes.InputHandlerIf;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -56,15 +57,13 @@ public class HomeAutomationApp extends Activity {
     }
   }
 
-  public void serverCallback(String id, String type, String val) {
-    int idInt = Integer.parseInt(id);
-    int typeInt = Integer.parseInt(type);
+  public void serverCallback(int idInt, int typeInt, String val) {
     if (typeInt >= Utilities.DIGITAL_INPUT && typeInt <= Utilities.SERIAL_INPUT) {
       if (inputList.get(typeInt).containsKey(idInt)) {
         inputList.get(typeInt).get(idInt).setValue(val);
       }
     } else {
-      Utilities.logWarning("ID " + id + " has no registered callback for type " + type);
+      Utilities.logWarning("ID " + Integer.toString(idInt) + " has no registered callback for type " + Integer.toString(typeInt));
     }
   }
 
@@ -103,8 +102,18 @@ public class HomeAutomationApp extends Activity {
   }
 
   public void sendMessage(int join, int type, String s) {
+    // Join is 1 based, we send 0 based
     if (mServer != null) {
-      mServer.sendMessage(Integer.toString(join) + ":" + Integer.toString(type) + ":" + s + "\r");
+      switch(type) {
+        case Utilities.DIGITAL_INPUT:
+          mServer.sendDigital(join - 1, Integer.parseInt(s));
+          break;
+        case Utilities.ANALOG_INPUT:
+          mServer.sendAnalog(join - 1, Integer.parseInt(s));
+          break;
+        default:
+          mServer.sendSerial(join - 1, s);
+      }
     }
   }
 
@@ -329,7 +338,7 @@ public class HomeAutomationApp extends Activity {
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
       try {
         if (mServer == null) {
-          mServer = new Server(this, prefs.getString("ip", ""), Integer.parseInt(prefs.getString("port", "0")));
+          mServer = new Server(this, prefs.getString("ip", ""), Integer.parseInt(prefs.getString("port", "0")), Integer.parseInt(prefs.getString("id", "0")));
           mServerThread = new Thread(mServer);
           mServerThread.start();
         }

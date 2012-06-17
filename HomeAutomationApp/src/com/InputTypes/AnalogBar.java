@@ -13,7 +13,7 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
 
   public int join;
   private int value;
-  private boolean expectingFeedback;
+  private int expectingFeedback;
   private static final int MAXIMUM_VALUE = 65535;
 
   public AnalogBar(Context context, AttributeSet attrs, int defStyle) {
@@ -35,7 +35,7 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
   private void init(AttributeSet attrs) {
     setMax(MAXIMUM_VALUE);
     setOnSeekBarChangeListener(listen);
-    expectingFeedback = false;
+    expectingFeedback = 0;
     TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AnalogBar);
     join = a.getInteger(R.styleable.AnalogBar_ajoin, 0);
     if (join < 1 || join > 1000) {
@@ -54,10 +54,12 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
   }
 
   public void setValue(int v) {
-    if (expectingFeedback == false) {
+    if (expectingFeedback <= 0) {
       setProgress(v);
+      expectingFeedback = 0;
+    } else {
+      expectingFeedback--;
     }
-    expectingFeedback = false;
   }
 
   public void restoreState() {
@@ -79,7 +81,7 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
       value = progress;
       ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.ANALOG_INPUT, Integer.toString(progress));
-      expectingFeedback = true;
+      expectingFeedback++;
     }
   };
 

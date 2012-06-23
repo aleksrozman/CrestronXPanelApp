@@ -9,11 +9,11 @@ import com.HomeAutomationApp.R;
 import com.InputTypes.DigitalButton;
 import com.InputTypes.InputHandlerIf;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
@@ -42,6 +42,7 @@ public class HomeAutomationApp extends Activity {
   private Server mServer;
   private Thread mServerThread;
   private PhoneListener mPhone;
+  private NetworkListener mNet;
   private ViewFlipper mFlipper;
   private Vibrator myVib;
   private int dButtonPhone = 0;
@@ -54,6 +55,14 @@ public class HomeAutomationApp extends Activity {
         sendMessage(dButtonPhone, Utilities.DIGITAL_INPUT, "1");
         sendMessage(dButtonPhone, Utilities.DIGITAL_INPUT, "0");
       }
+    }
+  }
+  
+  public void networkChanged(boolean connected) {
+    if(connected) {
+      mServer.run();
+    } else {
+      mServer.shutdown();
     }
   }
 
@@ -126,7 +135,9 @@ public class HomeAutomationApp extends Activity {
     try {
       setContentView(R.layout.main);
       mPhone = new PhoneListener(this);
+      mNet = new NetworkListener(this);
       registerReceiver(mPhone, new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED));
+      registerReceiver(mNet, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
       startThread();
       mFlipper = (ViewFlipper) findViewById(R.id.viewflip);
       myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
@@ -136,7 +147,7 @@ public class HomeAutomationApp extends Activity {
   }
 
   public void VibrateButton() {
-    myVib.vibrate(50);
+    myVib.vibrate(40);
   }
 
   @Override

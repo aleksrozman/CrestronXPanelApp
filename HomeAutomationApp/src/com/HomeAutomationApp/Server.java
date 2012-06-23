@@ -42,7 +42,7 @@ public class Server implements Runnable {
   private String mIP;
   private int mPort;
   private int mId;
-  private final Semaphore lock = new Semaphore(1); /* Better to be safe, cannot trust boolean */
+  private static final Semaphore lock = new Semaphore(1); /* Better to be safe, cannot trust boolean */
 
   class CIPMessage {
     public byte type;

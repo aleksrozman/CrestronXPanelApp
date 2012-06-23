@@ -59,10 +59,16 @@ public class HomeAutomationApp extends Activity {
   }
   
   public void networkChanged(boolean connected) {
+    Utilities.logDebug("Network has been " + ((connected) ? "connected" : "disconnected"));
     if(connected) {
-      mServer.run();
+      if(mServer == null) {
+        startThread();
+      } else if(mServer.status() == false) {
+        terminateThread();
+        startThread();
+      }
     } else {
-      mServer.shutdown();
+      terminateThread();
     }
   }
 
@@ -138,7 +144,7 @@ public class HomeAutomationApp extends Activity {
       mNet = new NetworkListener(this);
       registerReceiver(mPhone, new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED));
       registerReceiver(mNet, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-      startThread();
+      /* startThread(); gets called by the network intent */
       mFlipper = (ViewFlipper) findViewById(R.id.viewflip);
       myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
     } catch (Exception x) {

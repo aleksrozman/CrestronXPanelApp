@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -19,11 +20,17 @@ import android.widget.Toast;
 public class Server implements Runnable {
 
   private Timer heartBeat;
-  private Timer updateRequest;
+  /* OPTIONAL, poll the update request
+   * private static final int UPDATE_FREQ = 1000; // 1 second
+   * private Timer updateRequest;
+   */
+  private Timer hold;
   private static volatile boolean serverThreadAlive = false;
   private static final int MY_NOTIFICATION = 1;
   private static final int MAX_RETRIES = 3;
   private static final int TIME_TO_RECONNECT = 2000;
+  private static final int HEARTBEAT_FREQ = 5000; /* 5 seconds */
+  private static final int HOLD_FREQ = 500; /* .5 seconds */
   private Socket mSocket;
   private Toast mConnectFailedToast;
   private Toast mIDFailedToast;
@@ -35,6 +42,7 @@ public class Server implements Runnable {
   private String mIP;
   private int mPort;
   private int mId;
+  private final Semaphore lock = new Semaphore(1); /* Better to be safe, cannot trust boolean */
 
   class CIPMessage {
     public byte type;
@@ -71,14 +79,18 @@ public class Server implements Runnable {
   private CIPMessage connectionMsg;
   private CIPMessage heartbeatMsg;
   private CIPMessage updateRequestMsg;
-
+  private CIPMessage holdMsg;
+  
   public Server(HomeAutomationApp h, String ip, int port, int id) {
     home = h;
     mIP = ip;
     mPort = port;
     mId = id;
     heartBeat = new Timer();
-    updateRequest = new Timer();
+    hold = new Timer();
+/* OPTIONAL
+ *     updateRequest = new Timer();
+ */
     
     byte[] connectionBody = { 0x7F, 0x00, 0x00, 0x01, 0x00, (byte) mId, 0x40};
     connectionMsg = new CIPMessage((byte) 0x01, connectionBody);
@@ -126,8 +138,23 @@ public class Server implements Runnable {
   }
   
   public void sendDigital(int join, int value) {
-    byte[] body = {0x00, 0x00, 0x03, 0x27, (byte) (join & 0xFF), (byte) ((join >> 8) | ((value == 0) ? 0x0080 : 0x0000))};
-    sendMessage(new CIPMessage((byte) 0x05, body));
+    if(value == 1) {
+      byte[] body = {0x00, 0x00, 0x03, 0x27, (byte) (join & 0xFF), (byte) (join >> 8)};
+      holdMsg = new CIPMessage((byte) 0x05, body);
+      /* Only supporting 1 hold */
+      hold.schedule(new TimerTask() {
+        
+        @Override
+        public void run() {
+          sendMessage(holdMsg);
+        }
+      }, 0, HOLD_FREQ);
+    } else {
+      byte[] body = {0x00, 0x00, 0x03, 0x27, (byte) (join & 0xFF), (byte) ((join >> 8) | 0x0080 )};      
+      hold.cancel();
+      sendMessage(new CIPMessage((byte) 0x05, body));
+    }
+
   }
   
   public void sendAnalog(int join, int value) {
@@ -152,6 +179,9 @@ public class Server implements Runnable {
       mNotificationManager.cancel(MY_NOTIFICATION);
       serverThreadAlive = false;
       mConnectFailedToast.cancel();
+      heartBeat.cancel();
+      hold.cancel();
+/*      updateRquest.cancel(); */
       if (mSocket != null) {
         try {
           mSocket.shutdownInput();
@@ -232,7 +262,7 @@ public class Server implements Runnable {
             public void run() {
               sendMessage(heartbeatMsg);
             }
-          }, 0, 5000);
+          }, 0, HEARTBEAT_FREQ);
 /*          
  * OPTIONAL, poll the update request
  * updateRequest.schedule(new TimerTask() {
@@ -276,6 +306,7 @@ public class Server implements Runnable {
   }
 
   public void run() {
+    if(lock.tryAcquire() == false) return; /* One instance allowed only */
     int retry = 0;
     serverThreadAlive = true;
     while (serverThreadAlive) {
@@ -321,5 +352,6 @@ public class Server implements Runnable {
       }
     }
     Utilities.logWarning("Server thread over");
+    lock.release();
   }
 }

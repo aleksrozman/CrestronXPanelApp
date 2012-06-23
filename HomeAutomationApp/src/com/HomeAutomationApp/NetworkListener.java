@@ -15,7 +15,11 @@ public class NetworkListener extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
     ConnectivityManager cMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    home.networkChanged(cMan.getActiveNetworkInfo().isConnected());
+    if(cMan.getActiveNetworkInfo() == null ) {
+      home.networkChanged(false);
+    } else {
+      home.networkChanged(cMan.getActiveNetworkInfo().isConnected());
+    }
   }
 
 }

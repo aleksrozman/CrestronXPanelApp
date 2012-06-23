@@ -19,12 +19,12 @@ import android.widget.Toast;
 
 public class Server implements Runnable {
 
-  private Timer heartBeat;
+  private Timer heartBeat = null;
   /* OPTIONAL, poll the update request
    * private static final int UPDATE_FREQ = 1000; // 1 second
    * private Timer updateRequest;
    */
-  private Timer hold;
+  private Timer hold = null;
   private static volatile boolean serverThreadAlive = false;
   private static final int MY_NOTIFICATION = 1;
   private static final int MAX_RETRIES = 3;
@@ -86,12 +86,7 @@ public class Server implements Runnable {
     mIP = ip;
     mPort = port;
     mId = id;
-    heartBeat = new Timer();
-    hold = new Timer();
-/* OPTIONAL
- *     updateRequest = new Timer();
- */
-    
+   
     byte[] connectionBody = { 0x7F, 0x00, 0x00, 0x01, 0x00, (byte) mId, 0x40};
     connectionMsg = new CIPMessage((byte) 0x01, connectionBody);
 
@@ -123,6 +118,37 @@ public class Server implements Runnable {
     return serverThreadAlive;
   }
   
+  private void setupHeartbeat(boolean restart) {
+    if(heartBeat != null)
+      heartBeat.cancel();
+    if(restart) {
+      heartBeat = new Timer();
+      heartBeat.schedule(new TimerTask() {
+        
+        @Override
+        public void run() {
+          sendMessage(heartbeatMsg);
+        }
+      }, 0, HEARTBEAT_FREQ);
+    }
+  }
+  
+  private void setupHold(boolean restart) {
+    if(hold != null)
+      hold.cancel();
+    if(restart) {
+      hold = new Timer();
+      hold.schedule(new TimerTask() {
+        
+        @Override
+        public void run() {
+          sendMessage(holdMsg);
+        }
+      }, 0, HOLD_FREQ);
+    }
+  }
+  
+  
   private void sendMessage(CIPMessage input) {
     try {
       if (mSocket != null && mSocket.isConnected()) {
@@ -142,16 +168,10 @@ public class Server implements Runnable {
       byte[] body = {0x00, 0x00, 0x03, 0x27, (byte) (join & 0xFF), (byte) (join >> 8)};
       holdMsg = new CIPMessage((byte) 0x05, body);
       /* Only supporting 1 hold */
-      hold.schedule(new TimerTask() {
-        
-        @Override
-        public void run() {
-          sendMessage(holdMsg);
-        }
-      }, 0, HOLD_FREQ);
+      setupHold(true);
     } else {
       byte[] body = {0x00, 0x00, 0x03, 0x27, (byte) (join & 0xFF), (byte) ((join >> 8) | 0x0080 )};      
-      hold.cancel();
+      setupHold(false);
       sendMessage(new CIPMessage((byte) 0x05, body));
     }
 
@@ -176,12 +196,12 @@ public class Server implements Runnable {
 
   public void shutdown() {
     try {
-      mNotificationManager.cancel(MY_NOTIFICATION);
       serverThreadAlive = false;
+      mNotificationManager.cancel(MY_NOTIFICATION);
       mConnectFailedToast.cancel();
-      heartBeat.cancel();
-      hold.cancel();
-/*      updateRquest.cancel(); */
+      setupHeartbeat(false);
+      setupHold(false);
+/*    setupUpdateRequest(false); */
       if (mSocket != null) {
         try {
           mSocket.shutdownInput();
@@ -256,13 +276,7 @@ public class Server implements Runnable {
         } else if (input.len == 4) {
           mNotificationManager.notify(MY_NOTIFICATION, myNotification);
           // IP Registration Successful
-          heartBeat.schedule(new TimerTask() {
-            
-            @Override
-            public void run() {
-              sendMessage(heartbeatMsg);
-            }
-          }, 0, HEARTBEAT_FREQ);
+          setupHeartbeat(true);
 /*          
  * OPTIONAL, poll the update request
  * updateRequest.schedule(new TimerTask() {

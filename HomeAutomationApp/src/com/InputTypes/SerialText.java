@@ -10,6 +10,12 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+/**
+ * @author stealthflyer
+ * 
+ *         Add features to textview to to allow it to send/receive values to the
+ *         server (passes through the application context)
+ */
 public class SerialText extends TextView implements InputHandlerIf {
 
   public int join;
@@ -29,16 +35,19 @@ public class SerialText extends TextView implements InputHandlerIf {
   public SerialText(Context context) {
     super(context);
 
-    throw new RuntimeException("Valid parameters must be passed to this class via the XML parameters: app:join.");
+    throw new RuntimeException(
+        "Valid parameters must be passed to this class via the XML parameters: app:join.");
   }
 
   private void init(AttributeSet attrs) {
-    TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.SerialText);
+    TypedArray a = getContext().obtainStyledAttributes(attrs,
+        R.styleable.SerialText);
     join = a.getInteger(R.styleable.SerialText_sjoin, 0);
-    if (join < 1 || join > 1000) {
+    if (join < 1 || join > 1000) { // Sanity check (see digital button)
       throw new RuntimeException("The join number specified is invalid");
     } else {
-      ((HomeAutomationApp) getContext()).registerInput(this, join, Utilities.SERIAL_INPUT);
+      ((HomeAutomationApp) getContext()).registerInput(this, join,
+          Utilities.SERIAL_INPUT);
     }
   }
 

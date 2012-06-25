@@ -9,6 +9,12 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 
+/**
+ * @author stealthflyer
+ * 
+ *         Add features to seekbar to allow it to send/receive values to the
+ *         server (passes through the application context)
+ */
 public class AnalogBar extends SeekBar implements InputHandlerIf {
 
   public int join;
@@ -29,19 +35,22 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
   public AnalogBar(Context context) {
     super(context);
 
-    throw new RuntimeException("Valid parameters must be passed to this class via the XML parameters: app:join.");
+    throw new RuntimeException(
+        "Valid parameters must be passed to this class via the XML parameters: app:join.");
   }
 
   private void init(AttributeSet attrs) {
     setMax(MAXIMUM_VALUE);
     setOnSeekBarChangeListener(listen);
     expectingFeedback = 0;
-    TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AnalogBar);
+    TypedArray a = getContext().obtainStyledAttributes(attrs,
+        R.styleable.AnalogBar);
     join = a.getInteger(R.styleable.AnalogBar_ajoin, 0);
-    if (join < 1 || join > 1000) {
+    if (join < 1 || join > 1000) { // Sanity check (see digital button)
       throw new RuntimeException("The join number specified is invalid");
     } else {
-      ((HomeAutomationApp) getContext()).registerInput(this, join, Utilities.ANALOG_INPUT);
+      ((HomeAutomationApp) getContext()).registerInput(this, join,
+          Utilities.ANALOG_INPUT);
     }
   }
 
@@ -78,9 +87,11 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
 
     }
 
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(SeekBar seekBar, int progress,
+        boolean fromUser) {
       value = progress;
-      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.ANALOG_INPUT, Integer.toString(progress));
+      ((HomeAutomationApp) getContext()).sendMessage(join,
+          Utilities.ANALOG_INPUT, Integer.toString(progress));
       expectingFeedback++;
     }
   };

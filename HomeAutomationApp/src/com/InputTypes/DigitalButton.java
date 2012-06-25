@@ -12,12 +12,23 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
 
+/**
+ * @author stealthflyer
+ * 
+ *         Add features to button to to allow it to send/receive values to the
+ *         server (passes through the application context)
+ */
 public class DigitalButton extends Button implements InputHandlerIf {
 
   public int join;
   public int special;
   private boolean state;
-  private boolean expectingFeedback;
+  private boolean expectingFeedback; /*
+                                      * Offer the user a more interactive
+                                      * experience. The assumption is that
+                                      * pressing a button will return feedback
+                                      * (press) which can trigger vibration
+                                      */
 
   public DigitalButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -32,33 +43,40 @@ public class DigitalButton extends Button implements InputHandlerIf {
   public DigitalButton(Context context) {
     super(context);
 
-    throw new RuntimeException("Valid parameters must be passed to this class via the XML parameters: app:join.");
+    throw new RuntimeException(
+        "Valid parameters must be passed to this class via the XML parameters: app:join.");
   }
 
   private void init(AttributeSet attrs) {
     expectingFeedback = false;
-    TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.DigitalButton);
+    TypedArray a = getContext().obtainStyledAttributes(attrs,
+        R.styleable.DigitalButton);
     join = a.getInteger(R.styleable.DigitalButton_join, 0);
-    if (join < 1 || join > 1000) {
+    if (join < 1 || join > 1000) { // Just a sanity check (though a large number
+                                   // is OK we want to make sure its not
+                                   // extreme)
       throw new RuntimeException("The join number specified is invalid");
     } else {
       special = a.getInteger(R.styleable.DigitalButton_special, 0);
-      ((HomeAutomationApp) getContext()).registerInput(this, join, Utilities.DIGITAL_INPUT);
+      ((HomeAutomationApp) getContext()).registerInput(this, join,
+          Utilities.DIGITAL_INPUT);
     }
   }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN: {
-      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT, "1");
-      expectingFeedback = true;
-      break;
-    }
-    case MotionEvent.ACTION_UP: {
-      ((HomeAutomationApp) getContext()).sendMessage(join, Utilities.DIGITAL_INPUT, "0");
-      break;
-    }
+      case MotionEvent.ACTION_DOWN: {
+        ((HomeAutomationApp) getContext()).sendMessage(join,
+            Utilities.DIGITAL_INPUT, "1");
+        expectingFeedback = true;
+        break;
+      }
+      case MotionEvent.ACTION_UP: {
+        ((HomeAutomationApp) getContext()).sendMessage(join,
+            Utilities.DIGITAL_INPUT, "0");
+        break;
+      }
     }
     return true;
   }

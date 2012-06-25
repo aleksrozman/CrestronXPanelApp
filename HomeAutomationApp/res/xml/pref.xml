@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  <EditTextPreference
-    android:key="port"
-    android:title="Port Number"
-    android:inputType="number"
-    android:summary="Enter associated port number of system" android:defaultValue="@string/port"/>
-  <EditTextPreference
-    android:key="ip"
-    android:title="IP Address"
-    android:inputType="textUri"
-    android:summary="IP Address of system" android:defaultValue="@string/ip"/>
-  <EditTextPreference
-    android:key="id"
-    android:title="Panel ID"
-    android:inputType="number"
-    android:summary="ID of eControl for PC in SIMPL" android:defaultValue="@string/id"/>
+xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="System Settings">
+	<EditTextPreference
+	android:key="port"
+	android:title="Port Number"
+	android:inputType="number"
+	android:summary="Enter associated port number of system" android:defaultValue="@string/port"/>
+	<EditTextPreference
+	android:key="ip"
+	android:title="IP Address"
+	android:inputType="textUri"
+	android:summary="IP Address of system" android:defaultValue="@string/ip"/>
+	<EditTextPreference
+	android:key="id"
+	android:title="Panel ID"
+	android:inputType="number"
+	android:summary="ID of eControl for PC in SIMPL" android:defaultValue="@string/id"/>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="App Information">
+	<EditTextPreference android:key="about"
+	android:title="About" android:enabled="false" android:defaultValue=""
+	android:summary="Copyright (C) 2012\nstealthflyer@github.com\nLicensed under GPL"/>
+	</PreferenceCategory>
 </PreferenceScreen>

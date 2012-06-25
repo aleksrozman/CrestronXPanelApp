@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/background"
+>
+	<RelativeLayout
+		android:id="@+id/digital_group"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scaleType="fitCenter"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:paddingTop="5dip"
+	>
+		<com.InputTypes.DigitalButton
+			android:textColor="#4A9F4A"
+			android:shadowColor="#000000"
+			android:textSize="35sp"
+			android:textStyle="bold"
+			android:typeface="sans"
+			app:join="1"
+			android:id="@+id/sample1"
+			android:text="ON"
+			android:hapticFeedbackEnabled="true"
+			android:layout_width="150dip"
+			android:layout_height="100dip"
+			android:scaleType="fitCenter"
+		>
+		</com.InputTypes.DigitalButton>
+
+	</RelativeLayout>
+</AbsoluteLayout>
+

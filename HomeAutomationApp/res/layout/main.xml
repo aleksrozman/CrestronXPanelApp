@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/viewflip">
+	<include android:id="@+id/firstlayout" layout="@layout/first" />
+	<include android:id="@+id/secondlayout" layout="@layout/second" />
+	<include android:id="@+id/thirdlayout" layout="@layout/third" />
+</ViewFlipper>

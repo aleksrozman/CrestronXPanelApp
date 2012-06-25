@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+	android:id="@+id/firstscreen"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@drawable/background"
+>
+	<RelativeLayout
+		android:id="@+id/analog_group"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scaleType="fitCenter"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:paddingTop="5dip"
+	>
+		<com.InputTypes.AnalogBar
+			android:id="@+id/sampleBar"
+			android:layout_width="fill_parent"
+			android:layout_height="75dip"
+			android:minHeight="75dip"
+			android:layout_marginTop="20dip"
+			android:maxHeight="75dip"
+			app:ajoin="1" />
+
+
+	</RelativeLayout>
+</AbsoluteLayout>
+

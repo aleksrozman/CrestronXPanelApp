@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/background"
+>
+	<RelativeLayout
+		android:id="@+id/serial_group"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:paddingTop="5dip"
+	>
+        <com.InputTypes.SerialText
+            android:id="@+id/sampleText"
+            android:layout_width="100dip"
+            android:layout_height="42dip"
+            android:layout_marginBottom="8dip"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitCenter"
+            app:sjoin="1"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:typeface="sans" >
+        </com.InputTypes.SerialText>
+	</RelativeLayout>
+</RelativeLayout>
+

@@ -45,7 +45,7 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
       join = attrs
           .getAttributeIntValue(
               "http://schemas.android.com/apk/res/com.HomeAutomationApp",
-              "join", 0);
+              "ajoin", 0);
       if (join < 1 || join > 1000) { // Sanity check (see digital button)
         throw new RuntimeException("The join number specified is invalid");
       } else {

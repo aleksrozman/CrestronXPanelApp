@@ -24,7 +24,6 @@
 
     <CheckBoxPreference
         android:defaultValue="true"
-        android:inputType="boolean"
         android:key="screenLock"
         android:summary="Skip screen lock"
         android:title="Screen Lock Disable" />

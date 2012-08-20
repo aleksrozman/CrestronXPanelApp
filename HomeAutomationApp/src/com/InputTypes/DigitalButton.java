@@ -1,16 +1,14 @@
 package com.InputTypes;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.R;
-import com.HomeAutomationApp.Utilities;
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
+
+import com.HomeAutomationApp.HomeAutomationApp;
+import com.HomeAutomationApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -49,17 +47,23 @@ public class DigitalButton extends Button implements InputHandlerIf {
 
   private void init(AttributeSet attrs) {
     expectingFeedback = false;
-    TypedArray a = getContext().obtainStyledAttributes(attrs,
-        R.styleable.DigitalButton);
-    join = a.getInteger(R.styleable.DigitalButton_join, 0);
-    if (join < 1 || join > 1000) { // Just a sanity check (though a large number
-                                   // is OK we want to make sure its not
-                                   // extreme)
-      throw new RuntimeException("The join number specified is invalid");
-    } else {
-      special = a.getInteger(R.styleable.DigitalButton_special, 0);
-      ((HomeAutomationApp) getContext()).registerInput(this, join,
-          Utilities.DIGITAL_INPUT);
+    if (!isInEditMode()) {
+      join = attrs
+          .getAttributeIntValue(
+              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+              "join", 0);
+      if (join < 1 || join > 1000) { // Just a sanity check (though a large
+                                     // number
+                                     // is OK we want to make sure its not
+                                     // extreme)
+        throw new RuntimeException("The join number specified is invalid");
+      } else {
+        special = attrs.getAttributeIntValue(
+            "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+            "special", 0);
+        ((HomeAutomationApp) getContext()).registerInput(this, join,
+            Utilities.DIGITAL_INPUT);
+      }
     }
   }
 

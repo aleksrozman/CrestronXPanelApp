@@ -1,7 +1,5 @@
 package com.HomeAutomationApp;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

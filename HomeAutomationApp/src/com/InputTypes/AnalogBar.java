@@ -1,13 +1,11 @@
 package com.InputTypes;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.R;
-import com.HomeAutomationApp.Utilities;
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
+
+import com.HomeAutomationApp.HomeAutomationApp;
+import com.HomeAutomationApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -43,14 +41,17 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
     setMax(MAXIMUM_VALUE);
     setOnSeekBarChangeListener(listen);
     expectingFeedback = 0;
-    TypedArray a = getContext().obtainStyledAttributes(attrs,
-        R.styleable.AnalogBar);
-    join = a.getInteger(R.styleable.AnalogBar_ajoin, 0);
-    if (join < 1 || join > 1000) { // Sanity check (see digital button)
-      throw new RuntimeException("The join number specified is invalid");
-    } else {
-      ((HomeAutomationApp) getContext()).registerInput(this, join,
-          Utilities.ANALOG_INPUT);
+    if (!isInEditMode()) {
+      join = attrs
+          .getAttributeIntValue(
+              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+              "join", 0);
+      if (join < 1 || join > 1000) { // Sanity check (see digital button)
+        throw new RuntimeException("The join number specified is invalid");
+      } else {
+        ((HomeAutomationApp) getContext()).registerInput(this, join,
+            Utilities.ANALOG_INPUT);
+      }
     }
   }
 

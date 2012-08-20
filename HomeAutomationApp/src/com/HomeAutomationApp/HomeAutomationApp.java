@@ -21,17 +21,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.HomeAutomationApp.R;
-import com.InputTypes.DigitalButton;
-import com.InputTypes.InputHandlerIf;
-
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -40,7 +39,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import android.preference.PreferenceManager;
+
+import com.InputTypes.DigitalButton;
+import com.InputTypes.InputHandlerIf;
 
 /**
  * @author stealthflyer
@@ -67,6 +68,7 @@ public class HomeAutomationApp extends Activity {
   private NetworkListener mNet;
   private ViewFlipper mFlipper;
   private Vibrator myVib;
+  private KeyguardLock mKeyGuard;
   private int dButtonPhone = 0;
   private int dButtonSideUp = 0;
   private int dButtonSideDown = 0;
@@ -226,6 +228,8 @@ public class HomeAutomationApp extends Activity {
       /* startThread(); gets called by the network intent */
       mFlipper = (ViewFlipper) findViewById(R.id.viewflip);
       myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+      mKeyGuard = ((KeyguardManager) this.getSystemService(KEYGUARD_SERVICE)).newKeyguardLock(KEYGUARD_SERVICE);
+      disableScreenLock();
     } catch (Exception x) {
       Utilities.logDebug(x.getMessage());
     }
@@ -435,8 +439,19 @@ public class HomeAutomationApp extends Activity {
    */
   @Override
   public void onResume() {
+    disableScreenLock();
     restoreButtonStates();
     super.onResume();
+  }
+
+  
+  /* (non-Javadoc)
+   * @see android.app.Activity#onPause()
+   */
+  @Override
+  public void onPause() {
+    enableScreenLock();
+    super.onPause();
   }
 
   /*
@@ -535,6 +550,37 @@ public class HomeAutomationApp extends Activity {
     if (mServer != null) {
       mServer.shutdown();
       mServer = null;
+    }
+  }
+  
+  
+  /**
+   * Disable the screen lock
+   */
+  private void disableScreenLock() {
+    try {
+      SharedPreferences prefs = PreferenceManager
+          .getDefaultSharedPreferences(this);
+      if(prefs.getBoolean("screenLock", false)) {
+        mKeyGuard.disableKeyguard();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Enable the screen lock
+   */
+  private void enableScreenLock() {
+    try {
+      SharedPreferences prefs = PreferenceManager
+          .getDefaultSharedPreferences(this);
+      if(prefs.getBoolean("screenLock", false)) {
+        mKeyGuard.reenableKeyguard();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

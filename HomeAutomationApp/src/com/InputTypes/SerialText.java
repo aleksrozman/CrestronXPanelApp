@@ -1,14 +1,12 @@
 package com.InputTypes;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.R;
-import com.HomeAutomationApp.Utilities;
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import com.HomeAutomationApp.HomeAutomationApp;
+import com.HomeAutomationApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -40,14 +38,17 @@ public class SerialText extends TextView implements InputHandlerIf {
   }
 
   private void init(AttributeSet attrs) {
-    TypedArray a = getContext().obtainStyledAttributes(attrs,
-        R.styleable.SerialText);
-    join = a.getInteger(R.styleable.SerialText_sjoin, 0);
-    if (join < 1 || join > 1000) { // Sanity check (see digital button)
-      throw new RuntimeException("The join number specified is invalid");
-    } else {
-      ((HomeAutomationApp) getContext()).registerInput(this, join,
-          Utilities.SERIAL_INPUT);
+    if (!isInEditMode()) {
+      join = attrs
+          .getAttributeIntValue(
+              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+              "join", 0);
+      if (join < 1 || join > 1000) { // Sanity check (see digital button)
+        throw new RuntimeException("The join number specified is invalid");
+      } else {
+        ((HomeAutomationApp) getContext()).registerInput(this, join,
+            Utilities.SERIAL_INPUT);
+      }
     }
   }
 

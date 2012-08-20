@@ -21,6 +21,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory android:title="App Information">
 	<EditTextPreference android:key="about"
 	android:title="About" android:enabled="false" android:defaultValue=""
-	android:summary="Copyright (C) 2012\nstealthflyer@github.com\nLicensed under GPL"/>
+	android:summary="Copyright (C) 2012\nAleks Rozman\nLicensed under GPL"/>
 	</PreferenceCategory>
 </PreferenceScreen>

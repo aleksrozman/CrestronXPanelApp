@@ -417,7 +417,6 @@ public class Server implements Runnable {
 			break;
 		case CIP_HEARTBEAT_TIMEOUT: // Heartbeat timeout
 		case CIP_HEARTBEAT_RESPONSE: // Heartbeat response
-			// setupHeartbeat(true); // Added by AD
 			break;
 		case CIP_CONNECT_MESSAGE: // Connection message
 			if (input.len == 1) {

@@ -83,7 +83,7 @@ public class HomeAutomationApp extends Activity {
 		if (dButtonPhone != 0
 				&& inputlist.get(Utilities.DIGITAL_INPUT).containsKey(
 						dButtonPhone)) {
-			// We need to make sure that all (0) are not null;
+
 			if (inputlist.get(Utilities.DIGITAL_INPUT).get(dButtonPhone).get(0)
 					.getState() == !ringing) {
 
@@ -125,14 +125,25 @@ public class HomeAutomationApp extends Activity {
 	public void serverCallback(int join, int type, String val) {
 		if (type >= Utilities.DIGITAL_INPUT && type <= Utilities.SERIAL_INPUT) {
 			if (inputlist.get(type).containsKey(join)) {
-				for (InputHandlerIf list : inputlist.get(type).get(join)) {
-					list.setValue(val);
-				}
+				processJoins(join, type, val);
 			}
 		} else {
 			Utilities.logWarning("ID " + Integer.toString(join)
 					+ " has no registered callback for type "
 					+ Integer.toString(type));
+		}
+	}
+
+	private void processJoins(int join, int type, String val) {
+		for (InputHandlerIf list : inputlist.get(type).get(join)) {
+			
+			if (list.getClass().equals(com.InputTypes.DigitalButton.class) &&
+					(type == Utilities.SERIAL_INPUT)) {
+				((DigitalButton) list).setCaption(val);
+			}
+			else {
+				list.setValue(val);
+			}
 		}
 	}
 

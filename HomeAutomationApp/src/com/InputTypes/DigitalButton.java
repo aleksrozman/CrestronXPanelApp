@@ -18,113 +18,144 @@ import com.HomeAutomationApp.Utilities;
  */
 public class DigitalButton extends Button implements InputHandlerIf {
 
-  public int join;
-  public int special;
-  private boolean state;
-  private boolean expectingFeedback; /*
-                                      * Offer the user a more interactive
-                                      * experience. The assumption is that
-                                      * pressing a button will return feedback
-                                      * (press) which can trigger vibration
-                                      */
+	private String caption = null;
+	private Handler h = new Handler();
+	public int join;
+	public int special;
+	private boolean state;
+	private boolean expectingFeedback; /*
+										 * Offer the user a more interactive
+										 * experience. The assumption is that
+										 * pressing a button will return
+										 * feedback (press) which can trigger
+										 * vibration
+										 */
 
-  public DigitalButton(Context context, AttributeSet attrs, int defStyle) {
-    super(context, attrs, defStyle);
-    init(attrs);
-  }
+	public DigitalButton(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		init(attrs);
+	}
 
-  public DigitalButton(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init(attrs);
-  }
+	public DigitalButton(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init(attrs);
+	}
 
-  public DigitalButton(Context context) {
-    super(context);
+	public DigitalButton(Context context) {
+		super(context);
 
-    throw new RuntimeException(
-        "Valid parameters must be passed to this class via the XML parameters: app:join.");
-  }
+		throw new RuntimeException(
+				"Valid parameters must be passed to this class via the XML parameters: app:join.");
+	}
 
-  private void init(AttributeSet attrs) {
-    expectingFeedback = false;
-    if (!isInEditMode()) {
-      join = attrs
-          .getAttributeIntValue(
-              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
-              "join", 0);
-      if (join < 1 || join > 1000) { // Just a sanity check (though a large
-                                     // number
-                                     // is OK we want to make sure its not
-                                     // extreme)
-        throw new RuntimeException("The join number specified is invalid");
-      } else {
-        special = attrs.getAttributeIntValue(
-            "http://schemas.android.com/apk/res/com.HomeAutomationApp",
-            "special", 0);
-        ((HomeAutomationApp) getContext()).registerInput(this, join,
-            Utilities.DIGITAL_INPUT);
-      }
-    }
-  }
+	private void init(AttributeSet attrs) {
+		expectingFeedback = false;
+		if (!isInEditMode()) {
+			join = attrs.getAttributeIntValue(
+					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
+					"join", 0);
+			if (join < 1 || join > 1000) { // Just a sanity check (though a
+											// large
+											// number
+											// is OK we want to make sure its
+											// not
+											// extreme)
+				throw new RuntimeException(
+						"The digital join number specified is invalid");
+			} else {
+				special = attrs
+						.getAttributeIntValue(
+								"http://schemas.android.com/apk/res/com.HomeAutomationApp",
+								"special", 0);
+				((HomeAutomationApp) getContext()).registerInput(this, join,
+						Utilities.DIGITAL_INPUT);
+			}
+			join = attrs.getAttributeIntValue(
+					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
+					"sjoin", 0);
 
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
-    switch (event.getAction()) {
-      case MotionEvent.ACTION_DOWN: {
-        ((HomeAutomationApp) getContext()).sendMessage(join,
-            Utilities.DIGITAL_INPUT, "1");
-        expectingFeedback = true;
-        break;
-      }
-      case MotionEvent.ACTION_UP: {
-        ((HomeAutomationApp) getContext()).sendMessage(join,
-            Utilities.DIGITAL_INPUT, "0");
-        break;
-      }
-    }
-    return true;
-  }
+			if (join > 0 || join <= 1000) {
+				((HomeAutomationApp) getContext()).registerInput(this, join,
+						Utilities.SERIAL_INPUT);
+			} else if (join < 0 || join > 1000) {
+				throw new RuntimeException(
+						"The serial join number specified is invalid");
+			}
+		}
+	}
 
-  private Handler buttonHandler = new Handler() {
-    public void handleMessage(Message msg) {
-      state = (msg.what == 1);
-      if (expectingFeedback) {
-        expectingFeedback = false;
-        ((HomeAutomationApp) getContext()).VibrateButton();
-      }
-      setPressed(state);
-    }
-  };
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN: {
+			((HomeAutomationApp) getContext()).sendMessage(join,
+					Utilities.DIGITAL_INPUT, "1");
+			expectingFeedback = true;
+			break;
+		}
+		case MotionEvent.ACTION_UP: {
+			((HomeAutomationApp) getContext()).sendMessage(join,
+					Utilities.DIGITAL_INPUT, "0");
+			break;
+		}
+		}
+		return true;
+	}
 
-  public void setValue(String v) {
-    if (v.equals("0"))
-      off();
-    else
-      on();
-  }
+	private Handler buttonHandler = new Handler(new Handler.Callback() {
+		public boolean handleMessage(Message msg) {
+			state = (msg.what == 1);
+			if (expectingFeedback) {
+				expectingFeedback = false;
+				((HomeAutomationApp) getContext()).VibrateButton();
+			}
+			setPressed(state);
+			return true;
+		}
+	});
 
-  public void on() {
-    buttonHandler.sendEmptyMessage(1);
-  }
+	public void setValue(String v) {
+		if (v.equals("0"))
+			off();
+		else
+			on();
+	}
 
-  public void off() {
-    buttonHandler.sendEmptyMessage(0);
-  }
+	public void on() {
+		buttonHandler.sendEmptyMessage(1);
+	}
 
-  public boolean getState() {
-    return state;
-  }
+	public void off() {
+		buttonHandler.sendEmptyMessage(0);
+	}
 
-  public void restoreState() {
-    if (state == true) {
-      on();
-    } else {
-      off();
-    }
-  }
+	public boolean getState() {
+		return state;
+	}
 
-  public void setCaption(String c) {
-    // Does nothing
-  }
+	public void restoreState() {
+		
+		if (state == true) {
+			on();
+		} else {
+			off();
+		}
+
+		if (caption != null && !caption.equals(this.getText())) {
+			setCaption(caption);
+		}
+	}
+
+	public void setCaption(String c) {
+		caption = c;
+		h.post(updateCaption);
+	}
+
+	Runnable updateCaption = new Runnable() {
+		public void run() {
+			setText(caption);
+		}
+
+	};
 
 }

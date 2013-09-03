@@ -42,9 +42,26 @@
             android:textSize="35sp"
             android:textStyle="bold"
             android:typeface="sans"
-            app:join="1" >
+            app:join="1"
+            app:sjoin="1" >
         </com.InputTypes.DigitalButton>
 
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample3"
+            android:layout_width="150dip"
+            android:layout_height="100dip"
+            android:layout_below="@+id/sample2"
+            android:hapticFeedbackEnabled="true"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="ON"
+            android:textColor="#4A9F4A"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:typeface="sans"
+            app:join="2"
+            app:sjoin="1" >
+        </com.InputTypes.DigitalButton>
     </RelativeLayout>
 
 </RelativeLayout>

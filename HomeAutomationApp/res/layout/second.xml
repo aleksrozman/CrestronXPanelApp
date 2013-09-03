@@ -1,36 +1,50 @@
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@drawable/background"
->
-	<RelativeLayout
-		android:id="@+id/digital_group"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:scaleType="fitCenter"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
-		android:paddingTop="5dip"
-	>
-		<com.InputTypes.DigitalButton
-			android:textColor="#4A9F4A"
-			android:shadowColor="#000000"
-			android:textSize="35sp"
-			android:textStyle="bold"
-			android:typeface="sans"
-			app:join="1"
-			android:id="@+id/sample1"
-			android:text="ON"
-			android:hapticFeedbackEnabled="true"
-			android:layout_width="150dip"
-			android:layout_height="100dip"
-			android:scaleType="fitCenter"
-		>
-		</com.InputTypes.DigitalButton>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical" >
 
-	</RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/digital_group"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:paddingTop="5dip"
+        android:scaleType="fitCenter" >
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample1"
+            android:layout_width="150dip"
+            android:layout_height="100dip"
+            android:hapticFeedbackEnabled="true"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="ON"
+            android:textColor="#4A9F4A"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:typeface="sans"
+            app:join="1" >
+        </com.InputTypes.DigitalButton>
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample2"
+            android:layout_width="150dip"
+            android:layout_height="100dip"
+            android:layout_below="@+id/sample1"
+            android:hapticFeedbackEnabled="true"
+            android:scaleType="fitCenter"
+            android:shadowColor="#000000"
+            android:text="ON"
+            android:textColor="#4A9F4A"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:typeface="sans"
+            app:join="1" >
+        </com.InputTypes.DigitalButton>
+
+    </RelativeLayout>
+
 </RelativeLayout>
-

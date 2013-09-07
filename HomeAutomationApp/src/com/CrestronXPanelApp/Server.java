@@ -1,4 +1,4 @@
-package com.HomeAutomationApp;
+package com.CrestronXPanelApp;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,11 +10,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
+import com.CrestronXPanelApp.R;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 /**
@@ -35,13 +38,13 @@ public class Server implements Runnable {
 	private static final int CIP_ANALOG = 0x01;
 	private static final int CIP_DIGITAL = 0x00;
 	private static volatile boolean serverThreadAlive = false;
-	private static final int MY_NOTIFICATION = 1;
+	private static final int MY_NOTIFICATION = 0x101;
 	private static final int MAX_RETRIES = 3;
 	private static final int TIME_TO_RECONNECT = 2000;
 	private static final int HEARTBEAT_FREQ = 5000; /* 5 seconds */
 	private static final int HOLD_FREQ = 500; /* .5 seconds */
 
-	private HomeAutomationApp mHome; /* Parent pointer */
+	private CrestronXPanelApp mHome; /* Parent pointer */
 	private NotificationManager mNotificationManager;
 	private Notification myNotification;
 	private Toast mConnectFailedToast;
@@ -126,16 +129,14 @@ public class Server implements Runnable {
 	 * @param id
 	 *            Crestron ID desired
 	 */
-	public Server(HomeAutomationApp h, String ip, int port, int id) {
+	public Server(CrestronXPanelApp h, String ip, int port, int id) {
 		mHome = h;
 		mIP = ip;
 		mPort = port;
 		mId = id;
 
-		byte[] connectionBody = { 0x7F, 0x00, 0x00, 0x01, 0x00, (byte) mId,
-				0x40 };
-
-		mConnectionMsg = new CIPMessage((byte) 0x01, connectionBody);
+    byte[] connectionBody = { 0x7F, 0x00, 0x00, 0x01, 0x00, (byte) mId, 0x40 };
+    mConnectionMsg = new CIPMessage((byte) 0x01, connectionBody);
 
 		byte[] heartbeatBody = { 0x00, 0x00 };
 		mHeartbeatMsg = new CIPMessage((byte) 0x0D, heartbeatBody);
@@ -151,17 +152,18 @@ public class Server implements Runnable {
 		mNotificationManager = (NotificationManager) mHome
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		myNotification = new Notification(R.drawable.icon,
-				"App connected to home", System.currentTimeMillis());
-		Intent i = new Intent(mHome, HomeAutomationApp.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent contentIntent = PendingIntent.getActivity(mHome, 0, i, 0);
-		myNotification.setLatestEventInfo(mHome.getApplicationContext(),
-				"HomeAutomationApp", "Running in background", contentIntent);
-		myNotification.flags = Notification.FLAG_NO_CLEAR
-				| Notification.FLAG_ONGOING_EVENT;
-	}
+    Intent localIntent = new Intent(mHome, CrestronXPanelApp.class);
+    localIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    myNotification = new NotificationCompat.Builder(
+        mHome.getApplicationContext()).setSmallIcon(R.drawable.icon)
+        .setContentTitle("Home Automation App")
+        .setContentText("Running in background").setTicker("App has connected")
+        .setWhen(System.currentTimeMillis()).setAutoCancel(false)
+        .setOngoing(true)
+        .setContentIntent(PendingIntent.getActivity(mHome, 0, localIntent, 0))
+        .build();
+  }
 
 	/**
 	 * @return Whether the thread should exist (could cause race condition)
@@ -280,31 +282,35 @@ public class Server implements Runnable {
 		sendMessage(new CIPMessage((byte) 0x05, body));
 	}
 
-	/**
-	 * Terminate sockets and threads
-	 */
-	public void shutdown() {
-		try {
-			serverThreadAlive = false;
-			mNotificationManager.cancel(MY_NOTIFICATION);
-			mConnectFailedToast.cancel();
-			setupHeartbeat(false);
-			setupHold(false);
-			/* setupUpdateRequest(false); */
-			if (mSocket != null) {
-				try {
-					mSocket.shutdownInput();
-					mSocket.shutdownOutput();
-					mSocket.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			mSocket = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+  /**
+   * Terminate sockets and threads
+   */
+  public void shutdown() {
+    try {
+      serverThreadAlive = false;
+      mNotificationManager.cancel(MY_NOTIFICATION);
+      mConnectFailedToast.cancel();
+      setupHeartbeat(false);
+      setupHold(false);
+      /* setupUpdateRequest(false); */
+      if (mSocket != null) {
+        try {
+          if (mOutStream != null)
+            mOutStream.close();
+          if (mInStream != null)
+            mInStream.close();
+          mSocket.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      mSocket = null;
+      mOutStream = null;
+      mInStream = null;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 	/**
 	 * @param input
@@ -434,68 +440,68 @@ public class Server implements Runnable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	public void run() {
-		if (lock.tryAcquire() == false)
-			return; /* One instance allowed only */
-		int retry = 0; /* Attempt to connect several times */
-		serverThreadAlive = true;
-		while (serverThreadAlive) {
-			try {
-				mNotificationManager.cancel(MY_NOTIFICATION);
-				mSocket = new Socket(InetAddress.getByName(mIP), mPort);
-				mSocket.setReuseAddress(true);
-				mSocket.setKeepAlive(true);
-				mSocket.setSoLinger(false, 0);
-				mOutStream = new DataOutputStream(mSocket.getOutputStream());
-				mInStream = new DataInputStream(mSocket.getInputStream());
-				byte[] data = new byte[1024];
-				int charRead = 0;
-				Utilities.logDebug("Connected");
-				retry = 0;
-				CIPMessage temp;
-				while ((charRead = mInStream.read(data)) >= 0) {
-					for (int i = 0; i < charRead; i += (temp.len + 3)) {
-						temp = new CIPMessage(data, i);
-						try {
-							HandleCIPMessage(temp);
-						} catch (Exception e) {
-							Utilities.logWarning("Malformed byte stream");
-							e.printStackTrace();
-						}
-					}
-				}
-			} catch (IOException e) {
-				// Failed to connect
-				mConnectFailedToast.show();
-				try {
-					if (mSocket != null)
-						mSocket.close();
-					Thread.sleep(TIME_TO_RECONNECT);
-					if (++retry >= MAX_RETRIES) {
-						mHome.finish();
-						break;
-					} else {
-						mConnectFailedToast.cancel();
-						Thread.sleep(500);
-					}
-				} catch (InterruptedException e1) {
-					// Attempted to abort (normal)
-					e1.printStackTrace();
-				} catch (IOException e2) {
-					// Still failed to connect
-					e2.printStackTrace();
-				}
-			} catch (Exception e) {
-				// Catch all
-				e.printStackTrace();
-			}
-		}
-		Utilities.logWarning("Server thread over");
-		lock.release();
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Runnable#run()
+   */
+  public void run() {
+    if (lock.tryAcquire() == false)
+      return; /* One instance allowed only */
+    int retry = 0; /* Attempt to connect several times */
+    serverThreadAlive = true;
+    while (serverThreadAlive) {
+      try {
+        mNotificationManager.cancel(MY_NOTIFICATION);
+        mSocket = new Socket(InetAddress.getByName(mIP), mPort);
+        mSocket.setReuseAddress(true);
+        mSocket.setKeepAlive(true);
+        mSocket.setSoLinger(false, 0);
+        mOutStream = new DataOutputStream(mSocket.getOutputStream());
+        mInStream = new DataInputStream(mSocket.getInputStream());
+        byte[] data = new byte[1024];
+        int charRead = 0;
+        Utilities.logDebug("Connected");
+        retry = 0;
+        CIPMessage temp;
+        while ((charRead = mInStream.read(data)) >= 0) {
+          for (int i = 0; i < charRead; i += (temp.len + 3)) {
+            temp = new CIPMessage(data, i);
+            try {
+              HandleCIPMessage(temp);
+            } catch (Exception e) {
+              Utilities.logWarning("Malformed byte stream");
+              e.printStackTrace();
+            }
+          }
+        }
+      } catch (IOException e) {
+        // Failed to connect
+        mConnectFailedToast.show();
+        try {
+          if (mSocket != null)
+            mSocket.close();
+          Thread.sleep(TIME_TO_RECONNECT);
+          if (++retry >= MAX_RETRIES) {
+            mHome.finish();
+            break;
+          } else {
+            mConnectFailedToast.cancel();
+            Thread.sleep(500);
+          }
+        } catch (InterruptedException e1) {
+          Utilities.logWarning("Interrupted - closing");
+          // Attempted to abort (normal)
+        } catch (IOException e2) {
+          // Still failed to connect
+          Utilities.logWarning("IO Exception");
+        }
+      } catch (Exception e) {
+        // Catch all
+        Utilities.logWarning(e.getMessage());
+      }
+    }
+    Utilities.logWarning("Server thread over");
+    lock.release();
+  }
 }

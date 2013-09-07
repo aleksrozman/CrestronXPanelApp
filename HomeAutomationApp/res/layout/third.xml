@@ -1,60 +1,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+    xmlns:app="http://schemas.android.com/apk/res/com.CrestronXPanelApp"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/background"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <GridLayout
         android:id="@+id/serial_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:columnCount="2"
+        android:orientation="horizontal"
         android:paddingTop="5dip" >
 
-        <com.InputTypes.SerialText
-            android:id="@+id/sampleText"
-            android:layout_width="100dip"
-            android:layout_height="42dip"
-            android:layout_marginBottom="8dip"
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_column="0"
+            android:layout_gravity="left"
+            android:layout_marginTop="27dp"
+            android:layout_row="0"
             android:gravity="center_vertical|center_horizontal"
-            android:scaleType="fitCenter"
-            android:text=""
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:sjoin="1" >
-        </com.InputTypes.SerialText>
+            android:text="Sample Serial 1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_column="0"
+            android:layout_gravity="left|bottom"
+            android:layout_row="4"
+            android:text="Same join different page" />
 
         <com.InputTypes.SerialText
-            android:id="@+id/sampleText2"
+            android:id="@+id/sampleSerial"
             android:layout_width="100dip"
             android:layout_height="42dip"
-            android:layout_below="@+id/sampleText"
+            android:layout_column="0"
+            android:layout_gravity="left|center_vertical"
             android:layout_marginBottom="8dip"
-            android:gravity="center_vertical|center_horizontal"
+            android:layout_row="3"
             android:scaleType="fitCenter"
-            android:text=""
             android:textSize="28sp"
             android:textStyle="bold"
             android:typeface="sans"
-            app:sjoin="1" >
-        </com.InputTypes.SerialText>
+            app:sjoin="1" />
 
-        <com.InputTypes.SerialText
-            android:id="@+id/sampleText3"
-            android:layout_width="100dip"
-            android:layout_height="42dip"
-            android:layout_below="@+id/sampleText2"
-            android:layout_marginBottom="8dip"
-            android:gravity="center_vertical|center_horizontal"
-            android:scaleType="fitCenter"
-            android:text=""
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:sjoin="2" >
-        </com.InputTypes.SerialText>
-    </RelativeLayout>
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample2a"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="5"
+            android:text="@string/d2"
+            app:join="2"
+            app:sjoin="1" />
+    </GridLayout>
 
 </RelativeLayout>

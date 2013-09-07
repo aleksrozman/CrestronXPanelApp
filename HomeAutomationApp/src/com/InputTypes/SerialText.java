@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.Utilities;
+import com.CrestronXPanelApp.CrestronXPanelApp;
+import com.CrestronXPanelApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -16,7 +16,7 @@ import com.HomeAutomationApp.Utilities;
  */
 public class SerialText extends TextView implements InputHandlerIf {
 
-  public int join;
+  private int join;
   private String caption;
   private Handler h = new Handler();
 
@@ -40,13 +40,12 @@ public class SerialText extends TextView implements InputHandlerIf {
   private void init(AttributeSet attrs) {
     if (!isInEditMode()) {
       join = attrs
-          .getAttributeIntValue(
-              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+          .getAttributeIntValue(Utilities.XMLNS,
               "sjoin", 0);
       if (join < 1 || join > 1000) { // Sanity check (see digital button)
         throw new RuntimeException("The join number specified is invalid");
       } else {
-        ((HomeAutomationApp) getContext()).registerInput(this, join,
+        ((CrestronXPanelApp) getContext()).registerInput(this, join,
             Utilities.SERIAL_INPUT);
       }
     }
@@ -65,6 +64,10 @@ public class SerialText extends TextView implements InputHandlerIf {
   public void restoreState() {
     setValue(caption);
   }
+  
+  public int getJoin() {
+    return join;
+  }
 
   Runnable updateCaption = new Runnable() {
     public void run() {
@@ -72,5 +75,9 @@ public class SerialText extends TextView implements InputHandlerIf {
     }
 
   };
+
+  public String getSpecial() {
+    return null;
+  }
 
 }

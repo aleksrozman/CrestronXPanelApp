@@ -1,67 +1,106 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.CrestronXPanelApp"
+    android:id="@+id/LinearLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/background"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <GridLayout
         android:id="@+id/digital_group"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5dip"
-        android:paddingRight="5dip"
-        android:paddingTop="5dip"
-        android:scaleType="fitCenter" >
+        android:columnCount="2" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:text="Join 1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:text="Join 2 With Serial 1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <com.InputTypes.DigitalButton
             android:id="@+id/sample1"
-            android:layout_width="150dip"
-            android:layout_height="100dip"
-            android:hapticFeedbackEnabled="true"
-            android:scaleType="fitCenter"
-            android:shadowColor="#000000"
-            android:text="ON"
-            android:textColor="#4A9F4A"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:join="1" >
-        </com.InputTypes.DigitalButton>
+            android:layout_column="0"
+            android:layout_row="1"
+            android:text="@string/d1"
+            app:join="1" />
 
         <com.InputTypes.DigitalButton
             android:id="@+id/sample2"
-            android:layout_width="150dip"
-            android:layout_height="100dip"
-            android:layout_below="@+id/sample1"
-            android:hapticFeedbackEnabled="true"
-            android:scaleType="fitCenter"
-            android:shadowColor="#000000"
-            android:text="ON"
-            android:textColor="#4A9F4A"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:join="1"
-            app:sjoin="1" >
-        </com.InputTypes.DigitalButton>
+            android:layout_column="1"
+            android:layout_row="1"
+            android:text="@string/d2"
+            app:join="2"
+            app:sjoin="1" />
+    </GridLayout>
+
+    <GridLayout
+        android:id="@+id/special_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="4" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_column="0"
+            android:layout_columnSpan="3"
+            android:layout_row="0"
+            android:text="Special Keys For Phone State and Side Keys"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <com.InputTypes.DigitalButton
             android:id="@+id/sample3"
-            android:layout_width="150dip"
-            android:layout_height="100dip"
-            android:layout_below="@+id/sample2"
-            android:hapticFeedbackEnabled="true"
-            android:scaleType="fitCenter"
-            android:shadowColor="#000000"
-            android:text="ON"
-            android:textColor="#4A9F4A"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:join="2"
-            app:sjoin="1" >
-        </com.InputTypes.DigitalButton>
-    </RelativeLayout>
+            android:layout_column="1"
+            android:layout_gravity="left|top"
+            android:layout_row="1"
+            android:text="@string/d3"
+            app:join="92"
+            app:special="play" />
 
-</RelativeLayout>
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample4"
+            android:layout_column="2"
+            android:layout_gravity="left|top"
+            android:layout_row="1"
+            android:text="@string/d4"
+            app:join="93"
+            app:special="pause" />
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample7"
+            android:layout_column="1"
+            android:layout_gravity="left|top"
+            android:layout_row="3"
+            android:text="@string/d7"
+            app:join="3"
+            app:special="mute" />
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample6"
+            android:layout_column="2"
+            android:layout_gravity="left|top"
+            android:layout_row="2"
+            android:text="@string/d6"
+            app:join="93"
+            app:special="sidedown" />
+
+        <com.InputTypes.DigitalButton
+            android:id="@+id/sample5"
+            android:layout_column="1"
+            android:layout_gravity="left|top"
+            android:layout_row="2"
+            android:text="@string/d5"
+            app:join="92"
+            app:special="sideup" />
+
+    </GridLayout>
+
+</LinearLayout>

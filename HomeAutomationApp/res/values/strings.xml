@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="app_name">Home Control</string>
-<string name="port">41794</string>
-<string name="ip">192.168.1.25</string>
-<string name="id">4</string>
+
+    <string name="app_name">Crestron XPanel App</string>
+    <string name="port">41794</string>
+    <string name="ip">192.168.1.25</string>
+    <string name="id">4</string>
+
 </resources>

@@ -1,5 +1,5 @@
-/*  HomeAutomationApp - A Crestron XPanel Android Application
- *  Copyright (C) 2012 Aleks Rozman aleks.rozman@gmail.com
+/*  CrestronXPanelApp - A Crestron XPanel Android Application
+ *  Copyright (C) 2013 Aleks Rozman aleks.rozman@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,33 +14,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.HomeAutomationApp;
+package com.CrestronXPanelApp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
-import android.app.KeyguardManager;
-import android.app.KeyguardManager.KeyguardLock;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.XmlResourceParser;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
+import com.CrestronXPanelApp.R;
+import com.CrestronXPanelApp.EditPreferences;
 import com.InputTypes.DigitalButton;
 import com.InputTypes.InputHandlerIf;
 
@@ -50,29 +56,39 @@ import com.InputTypes.InputHandlerIf;
  *         Main activity for the app
  * 
  */
-public class HomeAutomationApp extends Activity {
+public class CrestronXPanelApp extends FragmentActivity {
 	/** Called when the activity is first created. */
 
-	private ArrayList<Map<Integer, List<InputHandlerIf>>> inputlist = new ArrayList<Map<Integer, List<InputHandlerIf>>>();
+	private ArrayList<Map<Integer, List<InputHandlerIf>>> inputList = new ArrayList<Map<Integer, List<InputHandlerIf>>>();
 
-	private static final int EDIT_ID = Menu.FIRST + 2;
-	private static final int CONNECT_ID = Menu.FIRST + 3;
-	private static final int DISCONNECT_ID = Menu.FIRST + 4;
+	class FragEntry {
+		private AppFragment frag;
+		private String title;
 
-	private static final float MIN_SWIPE_DISTANCE = 75;
-	private static final float EDGE_THRESHOLD = 75;
-	private float oldTouchValue;
+		FragEntry(AppFragment f, String t) {
+			frag = f;
+			title = t;
+		}
 
+		public AppFragment getFrag() {
+			return frag;
+		}
+
+		@Override
+		public String toString() {
+			return title;
+		}
+	}
+
+	public ArrayList<FragEntry> mFragments = new ArrayList<FragEntry>();
+	private Hashtable<String, List<InputHandlerIf>> specialList = new Hashtable<String, List<InputHandlerIf>>();
 	private Server mServer;
 	private Thread mServerThread;
 	private PhoneListener mPhone;
 	private NetworkListener mNet;
-	private ViewFlipper mFlipper;
+	private ViewPager mViewPager;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private Vibrator myVib;
-	private KeyguardLock mKeyGuard;
-	private int dButtonPhone = 0;
-	private int dButtonSideUp = 0;
-	private int dButtonSideDown = 0;
 
 	/**
 	 * @param ringing
@@ -80,16 +96,30 @@ public class HomeAutomationApp extends Activity {
 	 *            change in the phone ringing state
 	 */
 	public void phoneActivated(boolean ringing) {
-		if (dButtonPhone != 0
-				&& inputlist.get(Utilities.DIGITAL_INPUT).containsKey(
-						dButtonPhone)) {
+		simulateSpecialButtons("mute", !ringing);
+		simulateSpecialButtons("pause", false);
+		simulateSpecialButtons("play", false);
+	}
 
-			if (inputlist.get(Utilities.DIGITAL_INPUT).get(dButtonPhone).get(0)
-					.getState() == !ringing) {
-
-				sendMessage(dButtonPhone, Utilities.DIGITAL_INPUT, "1");
-				sendMessage(dButtonPhone, Utilities.DIGITAL_INPUT, "0");
+	private void simulateSpecialButtons(String name, boolean state) {
+		if (specialList.containsKey(name)) {
+			for (InputHandlerIf ii : specialList.get(name)) {
+				if (ii.getState() == state) {
+					simulateDigitalButton(ii);
+				}
 			}
+		}
+	}
+
+	private void simulateDigitalButton(InputHandlerIf button) {
+		if (button != null) {
+			sendMessage(button.getJoin(), Utilities.DIGITAL_INPUT, "1");
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			sendMessage(button.getJoin(), Utilities.DIGITAL_INPUT, "0");
 		}
 	}
 
@@ -115,6 +145,8 @@ public class HomeAutomationApp extends Activity {
 	}
 
 	/**
+	 * When something comes back from the server, delegate
+	 * 
 	 * @param join
 	 *            received
 	 * @param type
@@ -124,7 +156,7 @@ public class HomeAutomationApp extends Activity {
 	 */
 	public void serverCallback(int join, int type, String val) {
 		if (type >= Utilities.DIGITAL_INPUT && type <= Utilities.SERIAL_INPUT) {
-			if (inputlist.get(type).containsKey(join)) {
+			if (inputList.get(type).containsKey(join)) {
 				processJoins(join, type, val);
 			}
 		} else {
@@ -134,15 +166,23 @@ public class HomeAutomationApp extends Activity {
 		}
 	}
 
+	/**
+	 * Iterate through all handlers and update
+	 * 
+	 * @param join
+	 *            received
+	 * @param type
+	 *            received
+	 * @param val
+	 *            received
+	 */
 	private void processJoins(int join, int type, String val) {
-		for (InputHandlerIf list : inputlist.get(type).get(join)) {
-			
-			if (list.getClass().equals(com.InputTypes.DigitalButton.class) &&
-					(type == Utilities.SERIAL_INPUT)) {
-				((DigitalButton) list).setCaption(val);
-			}
-			else {
-				list.setValue(val);
+		for (InputHandlerIf ii : inputList.get(type).get(join)) {
+			if (ii.getClass().equals(DigitalButton.class)
+					&& (type == Utilities.SERIAL_INPUT)) {
+				((DigitalButton) ii).setCaption(val);
+			} else {
+				ii.setValue(val);
 			}
 		}
 	}
@@ -162,33 +202,23 @@ public class HomeAutomationApp extends Activity {
 	public void registerInput(InputHandlerIf i, int join, int type) {
 		if (type >= Utilities.DIGITAL_INPUT && type <= Utilities.SERIAL_INPUT) {
 
-			List<InputHandlerIf> list = inputlist.get(type).get(
-					Integer.valueOf(join));
+			List<InputHandlerIf> list = inputList.get(type).get(join);
 
 			if (list == null)
-				inputlist.get(type).put(Integer.valueOf(join),
+				inputList.get(type).put(join,
 						list = new ArrayList<InputHandlerIf>());
 
 			list.add(i);
-
-			if (i instanceof DigitalButton) {
-				switch (((DigitalButton) i).special) {
-				case 1:
-					dButtonSideUp = join;
-					break;
-				case 2:
-					dButtonSideDown = join;
-					break;
-				case 3:
-					dButtonPhone = join;
-					break;
-				}
+			if (i.getSpecial() != null && !i.getSpecial().isEmpty()) {
+				List<InputHandlerIf> specials = specialList.get(i.getSpecial());
+				if (specials == null)
+					specialList.put(i.getSpecial(),
+							specials = new ArrayList<InputHandlerIf>());
+				specials.add(i);
+			} else {
+				Utilities.logWarning("Join " + Integer.toString(join)
+						+ " failed due to bad type " + Integer.toString(type));
 			}
-			Utilities.logInformational("Join " + Integer.toString(join)
-					+ " registered to type " + Integer.toString(type));
-		} else {
-			Utilities.logWarning("Join " + Integer.toString(join)
-					+ " failed due to bad type " + Integer.toString(type));
 		}
 	}
 
@@ -196,7 +226,7 @@ public class HomeAutomationApp extends Activity {
 	 * Restores the state of the buttons after the activity comes back
 	 */
 	private void restoreButtonStates() {
-		Iterator<Map<Integer, List<InputHandlerIf>>> ix = inputlist.iterator();
+		Iterator<Map<Integer, List<InputHandlerIf>>> ix = inputList.iterator();
 		while (ix.hasNext()) {
 			Iterator<java.util.Map.Entry<Integer, List<InputHandlerIf>>> it;
 			it = ix.next().entrySet().iterator();
@@ -237,6 +267,25 @@ public class HomeAutomationApp extends Activity {
 		}
 	}
 
+	/**
+	 * Shortcut to send a press on the digital members of an input list
+	 * 
+	 * @param list
+	 *            every input to send to
+	 * @param val
+	 *            1 or 0 to press
+	 */
+	public void sendDigitalListMessage(List<InputHandlerIf> list, int val) {
+		// Join is 1 based, we send 0 based
+		if (mServer != null && list != null) {
+			for (InputHandlerIf item : list) {
+				if (item.getClass().equals(DigitalButton.class)) {
+					mServer.sendDigital(item.getJoin() - 1, val);
+				}
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -244,9 +293,11 @@ public class HomeAutomationApp extends Activity {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		inputlist.add(new HashMap<Integer, List<InputHandlerIf>>()); // Digital
-		inputlist.add(new HashMap<Integer, List<InputHandlerIf>>()); // Analog
-		inputlist.add(new HashMap<Integer, List<InputHandlerIf>>()); // Serial
+		inputList.add(new HashMap<Integer, List<InputHandlerIf>>()); // Digital
+		inputList.add(new HashMap<Integer, List<InputHandlerIf>>()); // Analog
+		inputList.add(new HashMap<Integer, List<InputHandlerIf>>()); // Serial
+
+		initializeFragments();
 		super.onCreate(savedInstanceState);
 		try {
 			setContentView(R.layout.main);
@@ -257,11 +308,12 @@ public class HomeAutomationApp extends Activity {
 			registerReceiver(mNet, new IntentFilter(
 					ConnectivityManager.CONNECTIVITY_ACTION));
 			/* startThread(); gets called by the network intent */
-			mFlipper = (ViewFlipper) findViewById(R.id.viewflip);
+			mViewPager = (ViewPager) findViewById(R.id.pager);
+			mSectionsPagerAdapter = new SectionsPagerAdapter(
+					getSupportFragmentManager());
+			mViewPager.setOffscreenPageLimit(mFragments.size());
+			mViewPager.setAdapter(mSectionsPagerAdapter);
 			myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
-			mKeyGuard = ((KeyguardManager) this
-					.getSystemService(KEYGUARD_SERVICE))
-					.newKeyguardLock(KEYGUARD_SERVICE);
 			disableScreenLock();
 		} catch (Exception x) {
 			Utilities.logDebug(x.getMessage());
@@ -283,15 +335,15 @@ public class HomeAutomationApp extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case EDIT_ID:
+		case R.id.menu_settings:
 			terminateThread();
 			startActivity(new Intent(this, EditPreferences.class));
 			return true;
-		case CONNECT_ID:
+		case R.id.menu_connect:
 			terminateThread();
 			startThread();
 			return true;
-		case DISCONNECT_ID:
+		case R.id.menu_disconnect:
 			terminateThread();
 			return true;
 		}
@@ -307,11 +359,12 @@ public class HomeAutomationApp extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		try {
 			if (mServer != null) {
-				menu.findItem(CONNECT_ID).setVisible(!mServer.status());
-				menu.findItem(DISCONNECT_ID).setVisible(mServer.status());
+				menu.findItem(R.id.menu_connect).setVisible(!mServer.status());
+				menu.findItem(R.id.menu_disconnect)
+						.setVisible(mServer.status());
 			} else {
-				menu.findItem(CONNECT_ID).setVisible(true);
-				menu.findItem(DISCONNECT_ID).setVisible(false);
+				menu.findItem(R.id.menu_connect).setVisible(true);
+				menu.findItem(R.id.menu_disconnect).setVisible(false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -326,14 +379,10 @@ public class HomeAutomationApp extends Activity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, EDIT_ID, Menu.NONE, "Settings")
-				.setIcon(R.drawable.settings).setAlphabeticShortcut('e');
-		menu.add(Menu.NONE, DISCONNECT_ID, Menu.NONE, "Disconnect")
-				.setIcon(R.drawable.agt_stop).setAlphabeticShortcut('d');
-		menu.add(Menu.NONE, CONNECT_ID, Menu.NONE, "Connect")
-				.setIcon(R.drawable.connect_creating)
-				.setAlphabeticShortcut('c');
-		return super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.settings, menu);
+		return true;
+		// return super.onCreateOptionsMenu(menu);
 	}
 
 	/*
@@ -344,136 +393,6 @@ public class HomeAutomationApp extends Activity {
 	@Override
 	public void onOptionsMenuClosed(Menu menu) {
 		restoreButtonStates();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
-	 * 
-	 * Fling detection algorithm to allow switching between views. Better than
-	 * gestures to ensure full control, however high CPU usage
-	 * 
-	 * NOTE: As a result, cannot fling on inputs like buttons or the analog bar
-	 * primarily because the inputs send state right away rather than wait to
-	 * see if the user is performing an action
-	 */
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		try {
-			final View currentView = mFlipper.getCurrentView();
-			int lindex = mFlipper.getDisplayedChild() - 1;
-			int rindex = mFlipper.getDisplayedChild() + 1;
-			View leftView = null;
-			View rightView = null;
-			boolean switchRight = false;
-			boolean switchLeft = false;
-			if (lindex >= 0) {
-				leftView = mFlipper.getChildAt(lindex);
-			}
-			if (rindex < mFlipper.getChildCount()) {
-				rightView = mFlipper.getChildAt(rindex);
-			}
-			switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN: {
-				// User has activated the screen, store current position
-				oldTouchValue = event.getX();
-				for (int i = 0; i < mFlipper.getChildCount(); i++) {
-					if (i != mFlipper.getDisplayedChild())
-						mFlipper.getChildAt(i).setVisibility(View.INVISIBLE);
-				}
-				return false;
-			}
-			case MotionEvent.ACTION_UP: {
-				// User has let go of the screen, need to detect if thresholds
-				// have
-				// been met and move to new view or restore
-				float currentX = event.getX();
-				if (oldTouchValue == currentX) {
-					if (currentX < EDGE_THRESHOLD)
-						switchLeft = true;
-					if (currentView.getWidth() - currentX < EDGE_THRESHOLD)
-						switchRight = true;
-					if (!switchLeft && !switchRight)
-						return false;
-				}
-				if (oldTouchValue < currentX) {
-					if (leftView == null) {
-						leftView = mFlipper
-								.getChildAt(mFlipper.getChildCount() - 1);
-					}
-					if ((currentX - oldTouchValue) < MIN_SWIPE_DISTANCE
-							|| currentX < EDGE_THRESHOLD) {
-						currentView.layout(0, currentView.getTop(),
-								(int) (currentView.getWidth()),
-								currentView.getBottom());
-						leftView.setVisibility(View.INVISIBLE);
-						break;
-					}
-					switchLeft = true;
-				}
-				if (oldTouchValue > currentX) {
-					if (rightView == null) {
-						rightView = mFlipper.getChildAt(0);
-					}
-					if ((oldTouchValue - currentX) < MIN_SWIPE_DISTANCE
-							|| (currentView.getWidth() - currentX) < EDGE_THRESHOLD) {
-						currentView.layout(0, currentView.getTop(),
-								(int) (currentView.getWidth()),
-								currentView.getBottom());
-						rightView.setVisibility(View.INVISIBLE);
-						break;
-					}
-					switchRight = true;
-				}
-				if (switchRight) {
-					float temp = (currentView.getWidth() - (oldTouchValue - currentX))
-							/ currentView.getWidth();
-					mFlipper.setInAnimation(Utilities
-							.inFromRightAnimation(temp));
-					mFlipper.setOutAnimation(Utilities.outToLeftAnimation(temp));
-					mFlipper.showNext();
-				}
-				if (switchLeft) {
-					float temp = (currentView.getWidth() - (currentX - oldTouchValue))
-							/ currentView.getWidth();
-					mFlipper.setInAnimation(Utilities.inFromLeftAnimation(temp));
-					mFlipper.setOutAnimation(Utilities
-							.outToRightAnimation(temp));
-					mFlipper.showPrevious();
-				}
-				return true;
-			}
-			case MotionEvent.ACTION_MOVE: {
-				// User is moving, append the views and make it look seemless
-				float currentX = event.getX();
-				int temp = (int) (currentX - oldTouchValue);
-				currentView.layout(temp, currentView.getTop(), temp
-						+ currentView.getWidth(), currentView.getBottom());
-				if (temp < 0) {
-					if (rightView == null)
-						rightView = mFlipper.getChildAt(0);
-					rightView.layout(currentView.getRight(),
-							rightView.getTop(), currentView.getRight()
-									+ rightView.getWidth(),
-							rightView.getBottom());
-					rightView.setVisibility(View.VISIBLE);
-				} else if (temp > 0) {
-					if (leftView == null)
-						leftView = mFlipper
-								.getChildAt(mFlipper.getChildCount() - 1);
-					leftView.layout(
-							currentView.getLeft() - leftView.getWidth(),
-							leftView.getTop(), currentView.getLeft(),
-							leftView.getBottom());
-					leftView.setVisibility(View.VISIBLE);
-				}
-				return true;
-			}
-			}
-		} catch (Exception x) {
-		}
-		return false;
 	}
 
 	/*
@@ -509,14 +428,16 @@ public class HomeAutomationApp extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-			if (event.getRepeatCount() == 0) {
-				sendMessage(dButtonSideUp, Utilities.DIGITAL_INPUT, "1");
+			if (event.getRepeatCount() == 0
+					&& specialList.containsKey("sideup")) {
+				sendDigitalListMessage(specialList.get("sideup"), 1);
 			}
 			return true;
 		}
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-			if (event.getRepeatCount() == 0) {
-				sendMessage(dButtonSideDown, Utilities.DIGITAL_INPUT, "1");
+			if (event.getRepeatCount() == 0
+					&& specialList.containsKey("sidedown")) {
+				sendDigitalListMessage(specialList.get("sidedown"), 1);
 			}
 			return true;
 		}
@@ -533,14 +454,16 @@ public class HomeAutomationApp extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-			if (event.getRepeatCount() == 0) {
-				sendMessage(dButtonSideUp, Utilities.DIGITAL_INPUT, "0");
+			if (event.getRepeatCount() == 0
+					&& specialList.containsKey("sideup")) {
+				sendDigitalListMessage(specialList.get("sideup"), 0);
 			}
 			return true;
 		}
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-			if (event.getRepeatCount() == 0) {
-				sendMessage(dButtonSideDown, Utilities.DIGITAL_INPUT, "0");
+			if (event.getRepeatCount() == 0
+					&& specialList.containsKey("sidedown")) {
+				sendDigitalListMessage(specialList.get("sidedown"), 0);
 			}
 			return true;
 		}
@@ -606,7 +529,7 @@ public class HomeAutomationApp extends Activity {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			if (prefs.getBoolean("screenLock", false)) {
-				mKeyGuard.disableKeyguard();
+				Utilities.stopLocking(this);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -621,11 +544,91 @@ public class HomeAutomationApp extends Activity {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			if (prefs.getBoolean("screenLock", false)) {
-				mKeyGuard.reenableKeyguard();
+				Utilities.startLocking(this);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Creates the fragments by parsing the layouts xml document
+	 */
+	public void initializeFragments() {
+		XmlResourceParser xr = getResources().getXml(R.xml.layouts);
+		int eventType = XmlPullParser.END_DOCUMENT;
+		try {
+			eventType = xr.getEventType();
+		} catch (XmlPullParserException e) {
+			throw new RuntimeException(
+					"Cannot parse the layouts file, no way to show");
+		}
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			if (eventType == XmlPullParser.START_TAG
+					&& xr.getName().equals("item")) {
+				int layout = xr.getAttributeResourceValue(null, "layout", 0);
+				String name = xr.getAttributeValue(null, "title");
+				mFragments.add(new FragEntry(AppFragment.newInstance(layout),
+						name));
+			}
+			try {
+				eventType = xr.next();
+			} catch (Exception e) {
+				break; // TODO better handling here
+			}
+		}
+	}
+
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+	 * one of the primary sections of the app.
+	 */
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+		/**
+		 * @param fm
+		 *            Fragment manager
+		 */
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.support.v4.app.FragmentPagerAdapter#getItem(int)
+		 */
+		@Override
+		public Fragment getItem(int position) {
+			if (position < mFragments.size())
+				return mFragments.get(position).getFrag();
+			else
+				return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.support.v4.view.PagerAdapter#getCount()
+		 */
+		@Override
+		public int getCount() {
+			return mFragments.size();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.support.v4.view.PagerAdapter#getPageTitle(int)
+		 */
+		@Override
+		public CharSequence getPageTitle(int position) {
+			if (position < mFragments.size())
+				return mFragments.get(position).toString();
+			else
+				return null;
+		}
+
 	}
 
 }

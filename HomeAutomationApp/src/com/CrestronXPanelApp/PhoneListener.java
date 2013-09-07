@@ -1,4 +1,4 @@
-package com.HomeAutomationApp;
+package com.CrestronXPanelApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,9 +13,9 @@ import android.telephony.TelephonyManager;
  * 
  */
 public class PhoneListener extends BroadcastReceiver {
-  private HomeAutomationApp home;
+  private CrestronXPanelApp home;
 
-  public PhoneListener(HomeAutomationApp h) {
+  public PhoneListener(CrestronXPanelApp h) {
     home = h;
   }
 

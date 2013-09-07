@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  
+      Store the views in the order desired as follows:
+      <item name="" layout="@layout/" />
+ -->
+<resources>
+    <item title="Analog Examples" layout="@layout/first" />
+    <item title="Digital Examples" layout="@layout/second" />
+    <item title="Serial Examples" layout="@layout/third" />
+</resources>

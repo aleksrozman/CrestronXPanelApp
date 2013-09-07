@@ -33,7 +33,7 @@
             android:defaultValue=""
             android:enabled="false"
             android:key="about"
-            android:summary="Copyright (C) 2012\nAleks Rozman\nLicensed under GPL"
+            android:summary="Copyright (C) 2013\nAleks Rozman\nLicensed under GPL"
             android:title="About" />
     </PreferenceCategory>
 

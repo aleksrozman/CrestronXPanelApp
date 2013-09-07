@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.Utilities;
+import com.CrestronXPanelApp.CrestronXPanelApp;
+import com.CrestronXPanelApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -20,8 +20,8 @@ public class DigitalButton extends Button implements InputHandlerIf {
 
 	private String caption = null;
 	private Handler h = new Handler();
-	public int join;
-	public int special;
+	private int join;
+	private String special;
 	private boolean state;
 	private boolean expectingFeedback; /*
 										 * Offer the user a more interactive
@@ -51,35 +51,24 @@ public class DigitalButton extends Button implements InputHandlerIf {
 	private void init(AttributeSet attrs) {
 		expectingFeedback = false;
 		if (!isInEditMode()) {
-			join = attrs.getAttributeIntValue(
-					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
-					"join", 0);
-			if (join < 1 || join > 1000) { // Just a sanity check (though a
-											// large
-											// number
-											// is OK we want to make sure its
-											// not
-											// extreme)
+			int sjoin = attrs.getAttributeIntValue(Utilities.XMLNS, "sjoin", 0);
+			if (sjoin > 0 || sjoin <= 1000) {
+				((CrestronXPanelApp) getContext()).registerInput(this, sjoin,
+						Utilities.SERIAL_INPUT);
+			} else if (sjoin < 0 || sjoin > 1000) {
+				throw new RuntimeException(
+						"The serial join number specified is invalid");
+			}
+			join = attrs.getAttributeIntValue(Utilities.XMLNS, "join", 0);
+			if (join < 1 || join > 1000) {
+				// Just a sanity check (though a large number is OK we want to
+				// make sure its not extreme)
 				throw new RuntimeException(
 						"The digital join number specified is invalid");
 			} else {
-				special = attrs
-						.getAttributeIntValue(
-								"http://schemas.android.com/apk/res/com.HomeAutomationApp",
-								"special", 0);
-				((HomeAutomationApp) getContext()).registerInput(this, join,
+				special = attrs.getAttributeValue(Utilities.XMLNS, "special");
+				((CrestronXPanelApp) getContext()).registerInput(this, join,
 						Utilities.DIGITAL_INPUT);
-			}
-			join = attrs.getAttributeIntValue(
-					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
-					"sjoin", 0);
-
-			if (join > 0 || join <= 1000) {
-				((HomeAutomationApp) getContext()).registerInput(this, join,
-						Utilities.SERIAL_INPUT);
-			} else if (join < 0 || join > 1000) {
-				throw new RuntimeException(
-						"The serial join number specified is invalid");
 			}
 		}
 	}
@@ -88,13 +77,13 @@ public class DigitalButton extends Button implements InputHandlerIf {
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
-			((HomeAutomationApp) getContext()).sendMessage(join,
+			((CrestronXPanelApp) getContext()).sendMessage(join,
 					Utilities.DIGITAL_INPUT, "1");
 			expectingFeedback = true;
 			break;
 		}
 		case MotionEvent.ACTION_UP: {
-			((HomeAutomationApp) getContext()).sendMessage(join,
+			((CrestronXPanelApp) getContext()).sendMessage(join,
 					Utilities.DIGITAL_INPUT, "0");
 			break;
 		}
@@ -107,7 +96,7 @@ public class DigitalButton extends Button implements InputHandlerIf {
 			state = (msg.what == 1);
 			if (expectingFeedback) {
 				expectingFeedback = false;
-				((HomeAutomationApp) getContext()).VibrateButton();
+				((CrestronXPanelApp) getContext()).VibrateButton();
 			}
 			setPressed(state);
 			return true;
@@ -134,7 +123,7 @@ public class DigitalButton extends Button implements InputHandlerIf {
 	}
 
 	public void restoreState() {
-		
+
 		if (state == true) {
 			on();
 		} else {
@@ -157,5 +146,13 @@ public class DigitalButton extends Button implements InputHandlerIf {
 		}
 
 	};
+
+	public int getJoin() {
+		return join;
+	}
+
+	public String getSpecial() {
+		return special;
+	}
 
 }

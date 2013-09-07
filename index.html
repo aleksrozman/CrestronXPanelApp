@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Crestron XPanel App by stealthflyer</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Crestron XPanel App</h1>
+        <h2>Android Crestron app simulates a regular (PC) XPanel</h2>
+        <a href="https://github.com/stealthflyer/CrestronXPanelApp" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="custom-crestron-xpanel-android-application" class="anchor" href="#custom-crestron-xpanel-android-application"><span class="octicon octicon-link"></span></a>Custom Crestron XPanel Android Application</h1>
+
+<h2>
+<a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h2>
+
+<p>Since I couldn't find a native Android app for Crestron systems, I figured I might as well make my own. 
+It was called HomeAutomationApp because that was the original purpose of the app for me, but it serverd as a generic Crestron Android app meant for customization to your needs. In the first version I made my own SIMPL module, but that did not allow multiple connections. Once I found an example of the CIP Crestron protocol on GitHub, I modified all the code to use that protocol instead.  I still couldnt find the whole protocol, so I implemented only the parts that were known. If you have the document, please send it to me and I can try to implement more features if they make sense.</p>
+
+<h3>
+<a name="android-23" class="anchor" href="#android-23"><span class="octicon octicon-link"></span></a>Android 2.3</h3>
+
+<p>My original testing was limited to a 800x480 Android 2.3.3 phone, however as things got newer and better (i.e. more mods released), I have have been making to incorporate those added features. The current android 2.3 version is on branch, and will not receive any further updates</p>
+
+<h2>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How It Works</h2>
+
+<p>With this app you can add buttons, seekbars, or textviews linked to the XPanel (eControl for PC) Digital/Analog/Serial inputs and outputs. All that is necessary is to update the res\ folder (drawable and layouts) to include the images and layouts that you want for the app. I incorporated the built in ViewPager (with TitleStrip) which allows you to "fling" on non-input items so that you can have multiple pages.</p>
+
+<ol>
+<li>Install the Android SDK</li>
+<li>Load the project and build</li>
+<li>Customize to your needs, changing only the res folder</li>
+</ol><h3>
+<a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h3>
+
+<ul>
+<li>The IP, Port, and XPanel IDs are dynamic and can change in the app once you load it. However, you may also choose to edit the <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/values/strings.xml">strings</a> file to your defaults</li>
+<li>The views need to be customized, use the examples <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/layouts/first.xml">first</a> | <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/res/layouts/second.xml">second</a> | <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/layouts/third.xml">third</a> as a starting point, and use the built in editor to make it look good</li>
+<li>To add or remove views, update the <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/xml/layouts.xml">res/xml/layouts</a> file</li>
+<li>Special keys supported:
+
+<ul>
+<li>mute = toggles when phone call received</li>
+<li>pause/play = goes high (if needed) when phone call occurs - use the toggle in SIMPL feedback to aid</li>
+<li>sideup/sidedown = connects the volume keys to a button</li>
+</ul>
+</li>
+</ul><p><img src="https://raw.github.com/stealthflyer/CrestronXPanelApp/master/CrestronXPanelAppScreenShots.png" alt="Sample Screen Shot"></p>
+
+<h2>
+<a name="more" class="anchor" href="#more"><span class="octicon octicon-link"></span></a>More</h2>
+
+<p>I also have C# and Python (GLADE) versions of this app if you want a Windows/Mac/Linux mechanism to control your Crestron system. Let me know if you are interested or if you need help. </p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/stealthflyer/CrestronXPanelApp/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/stealthflyer/CrestronXPanelApp/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/stealthflyer/CrestronXPanelApp"></a> is maintained by <a href="https://github.com/stealthflyer">stealthflyer</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-43803661-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>

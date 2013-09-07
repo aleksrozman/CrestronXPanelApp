@@ -53,6 +53,18 @@ public class DigitalButton extends Button implements InputHandlerIf {
 		if (!isInEditMode()) {
 			join = attrs.getAttributeIntValue(
 					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
+					"sjoin", 0);
+
+			if (join > 0 || join <= 1000) {
+				((HomeAutomationApp) getContext()).registerInput(this, join,
+						Utilities.SERIAL_INPUT);
+			} else if (join < 0 || join > 1000) {
+				throw new RuntimeException(
+						"The serial join number specified is invalid");
+			}
+			
+			join = attrs.getAttributeIntValue(
+					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
 					"join", 0);
 			if (join < 1 || join > 1000) { // Just a sanity check (though a
 											// large
@@ -69,17 +81,6 @@ public class DigitalButton extends Button implements InputHandlerIf {
 								"special", 0);
 				((HomeAutomationApp) getContext()).registerInput(this, join,
 						Utilities.DIGITAL_INPUT);
-			}
-			join = attrs.getAttributeIntValue(
-					"http://schemas.android.com/apk/res/com.HomeAutomationApp",
-					"sjoin", 0);
-
-			if (join > 0 || join <= 1000) {
-				((HomeAutomationApp) getContext()).registerInput(this, join,
-						Utilities.SERIAL_INPUT);
-			} else if (join < 0 || join > 1000) {
-				throw new RuntimeException(
-						"The serial join number specified is invalid");
 			}
 		}
 	}

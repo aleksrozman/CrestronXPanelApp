@@ -1,4 +1,4 @@
-package com.HomeAutomationApp;
+package com.CrestronXPanelApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,9 +13,9 @@ import android.net.ConnectivityManager;
  *         heartbeat)
  */
 public class NetworkListener extends BroadcastReceiver {
-  private HomeAutomationApp home;
+  private CrestronXPanelApp home;
 
-  public NetworkListener(HomeAutomationApp h) {
+  public NetworkListener(CrestronXPanelApp h) {
     home = h;
   }
 

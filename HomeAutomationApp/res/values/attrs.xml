@@ -3,7 +3,7 @@
 
 <declare-styleable name="DigitalButton">
 <attr name="join" format="integer" />
-<attr name="special" format="integer" />
+<attr name="special" format="string" />
 </declare-styleable>
 
 <declare-styleable name="AnalogBar">

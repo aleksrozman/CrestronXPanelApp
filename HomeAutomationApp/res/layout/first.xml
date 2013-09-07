@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:app="http://schemas.android.com/apk/res/com.HomeAutomationApp"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res/com.CrestronXPanelApp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/firstscreen"
     android:layout_width="fill_parent"
@@ -23,25 +23,15 @@
             android:minHeight="75dip"
             app:ajoin="1" />
 
-        <com.InputTypes.AnalogBar
-            android:id="@+id/sampleBar2"
-            android:layout_width="fill_parent"
-            android:layout_height="75dip"
-            android:layout_below="@+id/sampleBar"
-            android:layout_marginTop="20dip"
-            android:maxHeight="75dip"
-            android:minHeight="75dip"
-            app:ajoin="1" />
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Sample Analog Bar Connected To Join 1" />
 
-        <com.InputTypes.AnalogBar
-            android:id="@+id/sampleBar3"
-            android:layout_width="fill_parent"
-            android:layout_height="75dip"
-            android:layout_below="@+id/sampleBar2"
-            android:layout_marginTop="20dip"
-            android:maxHeight="75dip"
-            android:minHeight="75dip"
-            app:ajoin="2" />
     </RelativeLayout>
 
 </RelativeLayout>

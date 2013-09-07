@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="d1">Sample1</string>
+    <string name="d2">Sample2</string>
+    <string name="d3">Play</string>
+    <string name="d4">Pause</string>
+    <string name="d5">Up</string>
+    <string name="d6">Down</string>
+    <string name="d7">Mute</string>
+
+</resources>

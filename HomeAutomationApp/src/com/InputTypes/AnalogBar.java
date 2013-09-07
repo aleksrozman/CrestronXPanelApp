@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 
-import com.HomeAutomationApp.HomeAutomationApp;
-import com.HomeAutomationApp.Utilities;
+import com.CrestronXPanelApp.CrestronXPanelApp;
+import com.CrestronXPanelApp.Utilities;
 
 /**
  * @author stealthflyer
@@ -15,7 +15,7 @@ import com.HomeAutomationApp.Utilities;
  */
 public class AnalogBar extends SeekBar implements InputHandlerIf {
 
-  public int join;
+  private int join;
   private int value;
   private int expectingFeedback;
   private static final int MAXIMUM_VALUE = 65535;
@@ -43,13 +43,12 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
     expectingFeedback = 0;
     if (!isInEditMode()) {
       join = attrs
-          .getAttributeIntValue(
-              "http://schemas.android.com/apk/res/com.HomeAutomationApp",
+          .getAttributeIntValue(Utilities.XMLNS,
               "ajoin", 0);
       if (join < 1 || join > 1000) { // Sanity check (see digital button)
         throw new RuntimeException("The join number specified is invalid");
       } else {
-        ((HomeAutomationApp) getContext()).registerInput(this, join,
+        ((CrestronXPanelApp) getContext()).registerInput(this, join,
             Utilities.ANALOG_INPUT);
       }
     }
@@ -91,7 +90,7 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
     public void onProgressChanged(SeekBar seekBar, int progress,
         boolean fromUser) {
       value = progress;
-      ((HomeAutomationApp) getContext()).sendMessage(join,
+      ((CrestronXPanelApp) getContext()).sendMessage(join,
           Utilities.ANALOG_INPUT, Integer.toString(progress));
       expectingFeedback++;
     }
@@ -99,6 +98,14 @@ public class AnalogBar extends SeekBar implements InputHandlerIf {
 
   public void setCaption(String c) {
     // Does nothing
+  }
+  
+  public int getJoin() {
+    return join;
+  }
+
+  public String getSpecial() {
+    return null;
   }
 
 }

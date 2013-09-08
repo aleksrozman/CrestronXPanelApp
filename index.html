@@ -34,7 +34,7 @@
 <h2>
 <a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h2>
 
-<p>Since I couldn't find a native Android app for Crestron systems, I figured I might as well make my own. 
+<p>Since I couldn't find a native Android app for Crestron systems (at the time only iPhone was working), I figured I might as well make my own. 
 It was called HomeAutomationApp because that was the original purpose of the app for me, but it serverd as a generic Crestron Android app meant for customization to your needs. In the first version I made my own SIMPL module, but that did not allow multiple connections. Once I found an example of the CIP Crestron protocol on GitHub, I modified all the code to use that protocol instead.  I still couldnt find the whole protocol, so I implemented only the parts that were known. If you have the document, please send it to me and I can try to implement more features if they make sense.</p>
 
 <h3>
@@ -47,13 +47,44 @@ It was called HomeAutomationApp because that was the original purpose of the app
 
 <p>The first version was limited to a 800x480 Android 2.3.3 phone, however as things got newer and better (i.e. more mods released), I begun making updates to incorporate those added features. The current android 2.3 version is on its own branch, and will not receive any further updates from me.</p>
 
-<h2>
+<h3>
+<a name="prerequisite-knowledge" class="anchor" href="#prerequisite-knowledge"><span class="octicon octicon-link"></span></a>Prerequisite Knowledge</h3>
+
+<p>Users of the app need only a Crestron and Android phone</p>
+
+<p>Developers need to know:</p>
+
+<ol>
+<li>How to create a Crestron (PC) XPanel in SIMPL windows
+
+<ul>
+<li>What IP, port, and ID of the XPanel (may need to unlock firewall if using internet)</li>
+</ul>
+</li>
+<li>Access to a computer that will install Android SDK tools
+
+<ul>
+<li>The tutorial links should help walk you through</li>
+<li>The code should compile out of the box</li>
+</ul>
+</li>
+<li>Limited understanding of XML
+
+<ul>
+<li>Basic understanding of how resources work in Android would be needed if trying to create advanced UI components</li>
+</ul>
+</li>
+</ol><h2>
 <a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How It Works</h2>
 
 <p>With this app you can add buttons, seekbars, or textviews linked to the XPanel (eControl for PC) Digital/Analog/Serial inputs and outputs. All that is necessary is to update the <a href="/CrestronXPanelApp/res">res</a> folder to include the images and layouts that you want for the app. </p>
 
 <h3>
 <a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h3>
+
+<p>Checkout the <a href="https://github.com/stealthflyer/CrestronXPanelApp/releases">releases</a> for a sample APK that will test out the first few joins of your system.</p>
+
+<p>To customize:</p>
 
 <ol>
 <li><a href="http://developer.android.com/sdk/installing/index.html">Install the Android SDK</a></li>
@@ -74,13 +105,13 @@ It was called HomeAutomationApp because that was the original purpose of the app
 <li>Special keys - can mute/pause/play if a phone call comes in, or use the side keys
 ###Navigating
 I incorporated the built in ViewPager (with TitleStrip) which allows you to "fling" on non-input items so that you can have multiple pages. The limitation is that you cannot fling on components, because you have to register a button down and up press which overrides the fling event handler.</li>
-</ul><p><img src="CrestronXPanelAppScreenShots.png" alt="Sample Screen Shot"></p>
+</ul><p><img src="https://raw.github.com/stealthflyer/CrestronXPanelApp/master/CrestronXPanelAppScreenShots.png" alt="Sample Screen Shot"></p>
 
 <h2>
 <a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h2>
 
 <ul>
-<li>The IP, Port, and XPanel IDs are dynamic and can change in the app once you load it. Use the setting button on your phone to access the menu option and update your values
+<li>The IP (it can be a hostname), Port, and XPanel ID are dynamic and can change in the app once you load it. Use the setting button on your phone to access the menu option and update your values
 
 <ul>
 <li>You may also choose to edit the <a href="/CrestronXPanelApp/res/values/strings.xml">strings</a> file to your defaults</li>
@@ -103,6 +134,14 @@ I incorporated the built in ViewPager (with TitleStrip) which allows you to "fli
 
 <h2>
 <a name="more" class="anchor" href="#more"><span class="octicon octicon-link"></span></a>More</h2>
+
+<h3>
+<a name="why-is-it-cool" class="anchor" href="#why-is-it-cool"><span class="octicon octicon-link"></span></a>Why is it cool?</h3>
+
+<p>You can't top the fine control you get out of customization. I can link things like a phone call which mutes the TV set a few milliseconds before you hear it ring, and then unmutes when you hang up. Perhaps even link GPS and have your phone send a signal to Crestron based on how close you are. All depends on how you wire up your system.</p>
+
+<h3>
+<a name="dont-needwant-to-use-android" class="anchor" href="#dont-needwant-to-use-android"><span class="octicon octicon-link"></span></a>Don't need/want to use Android?</h3>
 
 <p>I also have C# and Python (GLADE) versions of this app if you want a Windows/Mac/Linux mechanism to control your Crestron system. Let me know if you are interested or if you need help. </p>
         </section>

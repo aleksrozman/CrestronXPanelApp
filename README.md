@@ -17,6 +17,7 @@ With this app you can add buttons, seekbars, or textviews linked to the XPanel (
 1. [Install the Android SDK](http://developer.android.com/sdk/installing/index.html)
 2. Load the project and build ([First App?](http://developer.android.com/training/basics/firstapp/index.html))
 3. Customize to your needs, changing only the contents of the [res](/CrestronXPanelApp/res) folder
+ * Add the joins from your Crestron application - Add an XPanel to the SIMPL program, connect your joins
 
 ###Operating
 * Analog inputs - drag the seekbar (minor rounding issues may arise)

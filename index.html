@@ -38,26 +38,56 @@
 It was called HomeAutomationApp because that was the original purpose of the app for me, but it serverd as a generic Crestron Android app meant for customization to your needs. In the first version I made my own SIMPL module, but that did not allow multiple connections. Once I found an example of the CIP Crestron protocol on GitHub, I modified all the code to use that protocol instead.  I still couldnt find the whole protocol, so I implemented only the parts that were known. If you have the document, please send it to me and I can try to implement more features if they make sense.</p>
 
 <h3>
+<a name="android-40" class="anchor" href="#android-40"><span class="octicon octicon-link"></span></a>Android 4.0+</h3>
+
+<p>The current master branch is compatible with only Android 4+ devices as it uses a library instead of the custom viewflipper. It is also orientation locked, all which are changes that can be made in your <a href="/CrestronXPanelApp/res">res</a> folder.</p>
+
+<h3>
 <a name="android-23" class="anchor" href="#android-23"><span class="octicon octicon-link"></span></a>Android 2.3</h3>
 
-<p>My original testing was limited to a 800x480 Android 2.3.3 phone, however as things got newer and better (i.e. more mods released), I have have been making to incorporate those added features. The current android 2.3 version is on branch, and will not receive any further updates</p>
+<p>The first version was limited to a 800x480 Android 2.3.3 phone, however as things got newer and better (i.e. more mods released), I begun making updates to incorporate those added features. The current android 2.3 version is on its own branch, and will not receive any further updates from me.</p>
 
 <h2>
 <a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How It Works</h2>
 
-<p>With this app you can add buttons, seekbars, or textviews linked to the XPanel (eControl for PC) Digital/Analog/Serial inputs and outputs. All that is necessary is to update the res\ folder (drawable and layouts) to include the images and layouts that you want for the app. I incorporated the built in ViewPager (with TitleStrip) which allows you to "fling" on non-input items so that you can have multiple pages.</p>
+<p>With this app you can add buttons, seekbars, or textviews linked to the XPanel (eControl for PC) Digital/Analog/Serial inputs and outputs. All that is necessary is to update the <a href="/CrestronXPanelApp/res">res</a> folder to include the images and layouts that you want for the app. </p>
+
+<h3>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h3>
 
 <ol>
-<li>Install the Android SDK</li>
-<li>Load the project and build</li>
-<li>Customize to your needs, changing only the res folder</li>
-</ol><h3>
-<a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h3>
+<li><a href="http://developer.android.com/sdk/installing/index.html">Install the Android SDK</a></li>
+<li>Load the project and build (<a href="http://developer.android.com/training/basics/firstapp/index.html">First App?</a>)</li>
+<li>Customize to your needs, changing only the contents of the <a href="/CrestronXPanelApp/res">res</a> folder
 
 <ul>
-<li>The IP, Port, and XPanel IDs are dynamic and can change in the app once you load it. However, you may also choose to edit the <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/values/strings.xml">strings</a> file to your defaults</li>
-<li>The views need to be customized, use the examples <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/layouts/first.xml">first</a> | <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/res/layouts/second.xml">second</a> | <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/layouts/third.xml">third</a> as a starting point, and use the built in editor to make it look good</li>
-<li>To add or remove views, update the <a href="https://github.com/stealthflyer/CrestronXPanelApp/blob/master/CrestronXPanelApp/CrestronXPanelApp/res/xml/layouts.xml">res/xml/layouts</a> file</li>
+<li>Add the joins from your Crestron application - Add an XPanel to the SIMPL program, connect your joins</li>
+</ul>
+</li>
+</ol><h3>
+<a name="operating" class="anchor" href="#operating"><span class="octicon octicon-link"></span></a>Operating</h3>
+
+<ul>
+<li>Analog inputs - drag the seekbar (minor rounding issues may arise)</li>
+<li>Serial inputs - when updated from Crestron will update while the application is running</li>
+<li>Digital inputs - press and release</li>
+<li>Special keys - can mute/pause/play if a phone call comes in, or use the side keys
+###Navigating
+I incorporated the built in ViewPager (with TitleStrip) which allows you to "fling" on non-input items so that you can have multiple pages. The limitation is that you cannot fling on components, because you have to register a button down and up press which overrides the fling event handler.</li>
+</ul><p><img src="CrestronXPanelAppScreenShots.png" alt="Sample Screen Shot"></p>
+
+<h2>
+<a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h2>
+
+<ul>
+<li>The IP, Port, and XPanel IDs are dynamic and can change in the app once you load it. Use the setting button on your phone to access the menu option and update your values
+
+<ul>
+<li>You may also choose to edit the <a href="/CrestronXPanelApp/res/values/strings.xml">strings</a> file to your defaults</li>
+</ul>
+</li>
+<li>The views need to be customized, use the examples <a href="/CrestronXPanelApp/res/layouts/first.xml">first</a> | <a href="/CrestronXPanelApp/res/layouts/second.xml">second</a> | <a href="/CrestronXPanelApp/res/layouts/third.xml">third</a> as a starting point, and use the built in editor to make it look good</li>
+<li>To add or remove views, update the <a href="/CrestronXPanelApp/res/xml/layouts.xml">res/xml/layouts</a> file</li>
 <li>Special keys supported:
 
 <ul>
@@ -66,7 +96,10 @@ It was called HomeAutomationApp because that was the original purpose of the app
 <li>sideup/sidedown = connects the volume keys to a button</li>
 </ul>
 </li>
-</ul><p><img src="https://raw.github.com/stealthflyer/CrestronXPanelApp/master/CrestronXPanelAppScreenShots.png" alt="Sample Screen Shot"></p>
+</ul><h2>
+<a name="updatingcontributing" class="anchor" href="#updatingcontributing"><span class="octicon octicon-link"></span></a>Updating/Contributing</h2>
+
+<p>The src/libs folders are the only things that needs to change, you can copy/paste these as you go or use <code>ln -s</code> if you want to have the GitHub and your version using the same codebase (makes it easier to update while testing your application). Feature requests always welcome.</p>
 
 <h2>
 <a name="more" class="anchor" href="#more"><span class="octicon octicon-link"></span></a>More</h2>

@@ -26,6 +26,10 @@ Developers need to know:
 ##How It Works
 With this app you can add buttons, seekbars, or textviews linked to the XPanel (eControl for PC) Digital/Analog/Serial inputs and outputs. All that is necessary is to update the [res](/CrestronXPanelApp/res) folder to include the images and layouts that you want for the app. 
 ###Quick Start
+Checkout the [releases](https://github.com/stealthflyer/CrestronXPanelApp/releases) for a sample APK that will test out the first few joins of your system.
+
+To customize:
+
 1. [Install the Android SDK](http://developer.android.com/sdk/installing/index.html)
 2. Load the project and build ([First App?](http://developer.android.com/training/basics/firstapp/index.html))
 3. Customize to your needs, changing only the contents of the [res](/CrestronXPanelApp/res) folder

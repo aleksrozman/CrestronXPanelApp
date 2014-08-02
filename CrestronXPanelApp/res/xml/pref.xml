@@ -15,8 +15,10 @@
             android:summary="IP Address of system"
             android:title="IP Address" />
         <EditTextPreference
+            android:digits="0123456789ABCDEF"
+            android:inputType="textCapCharacters|textNoSuggestions"
+            android:maxLength="2"
             android:defaultValue="@string/id"
-            android:inputType="number"
             android:key="id"
             android:summary="ID of eControl for PC in SIMPL"
             android:title="Panel ID" />

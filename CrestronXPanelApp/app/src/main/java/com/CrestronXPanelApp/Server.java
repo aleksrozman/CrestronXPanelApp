@@ -147,7 +147,7 @@ public class Server implements Runnable {
 		mConnectFailedToast = Toast.makeText(mHome.getApplicationContext(),
 				"Connection attempt failed", Toast.LENGTH_LONG);
 		mIDFailedToast = Toast.makeText(mHome.getApplicationContext(),
-				"Crestron ID " + Integer.toString(mId) + " does not exist",
+				"Crestron ID " + Integer.toHexString(mId) + " does not exist",
 				Toast.LENGTH_LONG);
 		mNotificationManager = (NotificationManager) mHome
 				.getSystemService(Context.NOTIFICATION_SERVICE);

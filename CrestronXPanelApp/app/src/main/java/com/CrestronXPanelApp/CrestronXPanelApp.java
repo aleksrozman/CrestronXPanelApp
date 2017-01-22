@@ -498,8 +498,8 @@ public class CrestronXPanelApp extends FragmentActivity {
 			try {
 				if (mServer == null) {
 					mServer = new Server(this, prefs.getString("ip", ""),
-							Integer.parseInt(prefs.getString("port", "0")),
-							Integer.parseInt(prefs.getString("id", "0")));
+							Integer.parseInt(prefs.getString("port", "41794")),
+							Integer.parseInt(prefs.getString("id", "3"),16));
 					mServerThread = new Thread(mServer);
 					mServerThread.start();
 				}

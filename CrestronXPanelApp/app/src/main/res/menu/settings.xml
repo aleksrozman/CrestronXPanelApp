@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_connect"
         android:icon="@drawable/connect_creating"
-        android:showAsAction="ifRoom|collapseActionView"
-        android:title="Connect"/>
+        app:showAsAction="ifRoom|collapseActionView"
+        android:title="Connect"
+        android:titleCondensed="Connect"/>
     <item
         android:id="@+id/menu_disconnect"
         android:icon="@drawable/agt_stop"
-        android:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="ifRoom|collapseActionView"
         android:title="Disconnect"/>
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/settings"
-        android:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="ifRoom|collapseActionView"
         android:title="Settings"/>
-    <item>
-    </item>
 
 </menu>

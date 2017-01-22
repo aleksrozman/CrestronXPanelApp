@@ -483,7 +483,7 @@ public class Server implements Runnable {
             mSocket.close();
           Thread.sleep(TIME_TO_RECONNECT);
           if (++retry >= MAX_RETRIES) {
-            mHome.finish();
+			  mHome.finish();
             break;
           } else {
             mConnectFailedToast.cancel();

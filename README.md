@@ -2,7 +2,11 @@
 
 ##History
 Since I couldn't find a native Android app for Crestron systems (at the time only iPhone was working), I figured I might as well make my own. 
-It was called HomeAutomationApp because that was the original purpose of the app for me, but it serverd as a generic Crestron Android app meant for customization to your needs. In the first version I made my own SIMPL module, but that did not allow multiple connections. Once I found an example of the CIP Crestron protocol on GitHub, I modified all the code to use that protocol instead.  I still couldnt find the whole protocol, so I implemented only the parts that were known. If you have the document, please send it to me and I can try to implement more features if they make sense.
+It was called HomeAutomationApp because that was the original purpose of the app for me, but it served as a generic Crestron Android app meant for customization to your needs. In the first version I made my own SIMPL module, but that did not allow multiple connections. Once I found an example of the CIP Crestron protocol on GitHub, I modified all the code to use that protocol instead.  I still couldn’t find the whole protocol, so I implemented only the parts that were known. If you have the document, please send it to me and I can try to implement more features if they make sense.
+
+
+###Gradle vs Eclipse
+The desired IDE is Android Studio. Master branch now has been updated to accommodate this change and should build the same as before. The Eclipse variant is now on a different branch, android_4_eclipse if you need a copy. 
 
 ###Android 4.0+
 The current master branch is compatible with only Android 4+ devices as it uses a library instead of the custom viewflipper. It is also orientation locked, all which are changes that can be made in your [res](/CrestronXPanelApp/res) folder.

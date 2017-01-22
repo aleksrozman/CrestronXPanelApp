@@ -299,6 +299,8 @@ public class CrestronXPanelApp extends FragmentActivity {
 
 		initializeFragments();
 		super.onCreate(savedInstanceState);
+//		startActivity(new Intent(this, EditPreferences.class));
+
 		try {
 			setContentView(R.layout.main);
 			mPhone = new PhoneListener(this);

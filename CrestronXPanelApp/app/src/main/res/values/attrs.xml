@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<declare-styleable name="DigitalButton">
+<attr name="join" format="integer" />
+<attr name="special" format="string" />
+</declare-styleable>
+
+<declare-styleable name="AnalogBar">
+<attr name="ajoin" format="integer" />
+</declare-styleable>
+
+<declare-styleable name="SerialText">
+<attr name="sjoin" format="integer" />
+</declare-styleable>
+
+</resources>

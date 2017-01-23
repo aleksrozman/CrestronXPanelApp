@@ -215,9 +215,6 @@ public class CrestronXPanelApp extends FragmentActivity {
 					specialList.put(i.getSpecial(),
 							specials = new ArrayList<InputHandlerIf>());
 				specials.add(i);
-			} else {
-				Utilities.logWarning("Join " + Integer.toString(join)
-						+ " failed due to bad type " + Integer.toString(type));
 			}
 		}
 	}
@@ -253,18 +250,26 @@ public class CrestronXPanelApp extends FragmentActivity {
 	 */
 	public void sendMessage(int join, int type, String s) {
 		// Join is 1 based, we send 0 based
-		if (mServer != null && join != 0) {
-			switch (type) {
-			case Utilities.DIGITAL_INPUT:
-				mServer.sendDigital(join - 1, Integer.parseInt(s));
-				break;
-			case Utilities.ANALOG_INPUT:
-				mServer.sendAnalog(join - 1, Integer.parseInt(s));
-				break;
-			default:
-				mServer.sendSerial(join - 1, s);
-			}
-		}
+        final int j = join;
+        final int t = type;
+        final String m = s;
+		new Thread() {
+			@Override
+			public void run() {
+				if (mServer != null && j != 0) {
+					switch (t) {
+						case Utilities.DIGITAL_INPUT:
+							mServer.sendDigital(j - 1, Integer.parseInt(m));
+							break;
+						case Utilities.ANALOG_INPUT:
+							mServer.sendAnalog(j - 1, Integer.parseInt(m));
+							break;
+						default:
+							mServer.sendSerial(j - 1, m);
+					}
+				}
+            }
+		}.start();
 	}
 
 	/**
